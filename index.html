@@ -6,8 +6,8 @@
     <title>Golf League Hub</title>
     <style>
         :root {
-            --p1-color: #1976d2; /* Blue */
-            --p2-color: #d32f2f; /* Red */
+            --p1-color: #1976d2; 
+            --p2-color: #d32f2f; 
             --neutral-bg: #555;   
         }
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding-bottom: 50px; overflow-x: hidden; }
@@ -30,29 +30,32 @@
 
         /* MATCH CARDS */
         .match-container { background: #DCDCDC; padding: 25px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); border: 1px solid #fff; }
-        
         .player-header { display: flex; justify-content: center; align-items: center; gap: 20px; font-weight: bold; font-size: 1.6rem; margin-bottom: 15px; }
         .vs-label { font-size: 0.9rem; color: #666; font-style: italic; }
-
         .match-result-banner { text-align: center; font-size: 1.6rem; margin: 10px 0 25px 0; padding: 15px; color: white; border-radius: 8px; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
 
+        /* WIDER SCORECARD CELLS */
         table { border-collapse: collapse; width: 100%; margin-bottom: 15px; background: white; table-layout: fixed; font-size: 1.1rem; }
-        th, td { border: 1px solid #bbb; padding: 12px 2px; text-align: center; }
+        th, td { border: 1px solid #bbb; padding: 12px 2px; text-align: center; min-width: 45px; } /* Increased min-width for status */
         th { background: #444; color: white; }
         
-        .row-label { background: #f0f0f0; font-weight: bold; width: 220px; text-align: left; padding-left: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        
-        /* New Status Cell Style */
-        .status-cell { font-size: 0.85rem; font-weight: bold; background: #fafafa; }
+        .row-label { background: #f0f0f0; font-weight: bold; width: 220px; text-align: left; padding-left: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .status-cell { font-size: 0.85rem; font-weight: bold; background: #fafafa; min-width: 55px; }
 
-        /* Score Highlighting */
         .win-cell-p1 { background-color: var(--p1-color) !important; color: white !important; font-weight: bold; }
         .win-cell-p2 { background-color: var(--p2-color) !important; color: white !important; font-weight: bold; }
 
-        /* STANDINGS & HISTORY */
+        /* WIDER STANDINGS PLAYER COLUMN */
         .section-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0; overflow-x: auto; }
-        .standings-table { min-width: 900px; width: 100%; }
-        .standings-table td:first-child { width: 390px; text-align: left; padding-left: 25px; font-weight: bold; font-size: 1.2rem; }
+        .standings-table { min-width: 1000px; width: 100%; }
+        .standings-table td:first-child { 
+            width: 500px; /* Increased by 30% + buffer */
+            text-align: left; 
+            padding-left: 25px; 
+            font-weight: bold; 
+            font-size: 1.2rem; 
+            white-space: nowrap; /* Prevents spilling into next column */
+        }
 
         .history-list { text-align: center; }
         .history-item { padding: 15px; border-bottom: 1px solid #eee; font-size: 1.2rem; display: block; width: 100%; }
@@ -62,13 +65,14 @@
         .hist-p2 { color: var(--p2-color); font-weight: bold; }
 
         @media (max-width: 800px) {
-            .carousel-wrapper { padding: 0 2%; gap: 20px; }
+            .carousel-wrapper { padding: 0 2%; gap: 15px; }
             table { font-size: 0.7rem; }
             .row-label { width: 90px; padding-left: 5px; }
             .player-header { font-size: 1.1rem; }
             .match-result-banner { font-size: 1.2rem; }
-            .standings-table { min-width: 650px; }
-            .standings-table td:first-child { width: 200px; }
+            .standings-table { min-width: 700px; }
+            .standings-table td:first-child { width: 250px; }
+            th, td { min-width: 30px; }
         }
     </style>
 </head>
@@ -122,8 +126,6 @@
 
         container.innerHTML = matches.map((m) => {
             const sum = arr => arr.reduce((a, b) => a + (parseInt(b) || 0), 0);
-            
-            // Calculate final status for banner
             let finalStatus = 0;
             for(let i=0; i<18; i++) {
                 let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
@@ -142,17 +144,13 @@
                         <span class="vs-label">vs</span>
                         <span style="color:var(--p2-color)">${m.p2Name}</span>
                     </div>
-                    
                     <div class="match-result-banner" style="background:${bannerColor}">${bannerText}</div>
-                    
                     ${[0, 9].map((start) => {
                         let runningStatus = 0;
-                        // Calculate running status up to the start of this table (for the back 9)
                         for(let i=0; i<start; i++) {
                             let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
                             if(s1 && s2) { if(s1 < s2) runningStatus++; else if(s2 < s1) runningStatus--; }
                         }
-
                         return `
                         <table>
                             <tr><th class="row-label">Hole</th>${[1,2,3,4,5,6,7,8,9].map(n => `<th>${n+start}</th>`).join('')}<th>${start === 0 ? 'OUT' : 'IN'}</th></tr>
@@ -191,7 +189,6 @@
                             </tr>
                         </table>`;
                     }).join('')}
-                    <div style="text-align:center; font-size:1rem; font-style:italic; color:#777;">${m.venue}</div>
                 </div>
             </div>`;
         }).join('');
