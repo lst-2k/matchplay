@@ -14,6 +14,27 @@
     
     .container { max-width: 1400px; margin: 0 auto; }
     h1, h2 { text-align: center; color: #2e7d32; }
+	
+	.logo-container {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.main-logo {
+    max-width: 400px; /* Adjust this to make your logo larger or smaller */
+    width: 80%;       /* Ensures it shrinks on small mobile screens */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Optional: Adjust spacing for mobile */
+@media (max-width: 800px) {
+    .main-logo {
+        max-width: 250px;
+        padding-top: 10px;
+    }
+}
 
     /* CAROUSEL SETTINGS */
     .carousel-perspective {
@@ -114,8 +135,9 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>⛳ League Match Day</h1>
+<div class="logo-container">
+    <img src="logo.png" alt="Golf League Logo" class="main-logo">
+</div>
     
     <div class="carousel-perspective">
         <div class="carousel-wrapper" id="carousel-view"></div>
