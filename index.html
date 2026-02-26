@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf League Standings</title>
+    <style>
+        :root { --p1-color: #1976d2; --p2-color: #d32f2f; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #eef2ee; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1, h2 { text-align: center; color: #2e7d32; }
+        
+        .section-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* Standings Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #333; color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) { background: #fafafa; }
+        .pts-col { font-weight: bold; background: #f4f4f4; text-align: center; }
+        .stat-col { text-align: center; }
+
+        /* History */
+        .week-label { background: #333; color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; margin: 20px 0 10px 0; display: inline-block; }
+        .history-item { padding: 10px; border-bottom: 1px solid #eee; font-size: 1.1rem; }
+        .win-p1 { color: var(--p1-color); font-weight: bold; margin-right: 8px; }
+        .win-p2 { color: var(--p2-color); font-weight: bold; margin-left: 8px; }
+        
+        .loading { text-align: center; font-style: italic; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏆 League Leaderboard</h1>
+
+    <div class="section-box">
+        <h2>Current Standings</h2>
+        <table id="standings-table">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th class="stat-col">W</th>
+                    <th class="stat-col">D</th>
+                    <th class="stat-col">L</th>
+                    <th class="stat-col">Pts</th>
+                </tr>
+            </thead>
+            <tbody id="points-body">
+                <tr><td colspan="5" class="loading">Loading standings...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-box">
+        <h2>Weekly Match Results</h2>
+        <div id="history-list">
+            <p class="loading">Loading match history...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // URL to your data file on GitHub
+    const DATA_URL = 'data.json'; 
+
+    async function loadLeagueData() {
+        try {
+            const response = await fetch(DATA_URL);
+            const data = await response.json();
+            renderPoints(data.history);
+            renderHistory(data.history);
+        } catch (err) {
+            console.error("Error loading data:", err);
+            document.getElementById('history-list').innerHTML = "<p>No data published yet.</p>";
+        }
+    }
+
+    function renderPoints(history) {
+        const stats = {};
+        history.forEach(w => {
+            w.results.forEach(r => {
+                [r.p1, r.p2].forEach(name => {
+                    if (!stats[name]) stats[name] = { w: 0, d: 0, l: 0, pts: 0 };
+                });
+                
+                // Logic to extract winner from the HTML result string
+                if (r.html.includes('win-p1')) {
+                    stats[r.p1].w++; stats[r.p1].pts += 2; stats[r.p2].l++;
+                } else if (r.html.includes('win-p2')) {
+                    stats[r.p2].w++; stats[r.p2].pts += 2; stats[r.p1].l++;
+                } else {
+                    stats[r.p1].d++; stats[r.p1].pts += 1;
+                    stats[r.p2].d++; stats[r.p2].pts += 1;
+                }
+            });
+        });
+
+        const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
+        document.getElementById('points-body').innerHTML = sorted.map(n => `
+            <tr>
+                <td style="font-weight:bold">${n}</td>
+                <td class="stat-col">${stats[n].w}</td>
+                <td class="stat-col">${stats[n].d}</td>
+                <td class="stat-col">${stats[n].l}</td>
+                <td class="pts-col">${stats[n].pts}</td>
+            </tr>`).join('');
+    }
+
+    function renderHistory(history) {
+        document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => `
+            <div class="week-label">${w.label}</div>
+            ${w.results.map(r => `<div class="history-item">${r.html}</div>`).join('')}
+        `).join('');
+    }
+
+    loadLeagueData();
+</script>
+
+</body>
+</html>
