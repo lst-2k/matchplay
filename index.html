@@ -12,7 +12,6 @@
         }
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding-bottom: 50px; overflow-x: hidden; }
         
-        /* Edge-to-edge Logo */
         .logo-container { width: 100%; line-height: 0; background: #fff; border-bottom: 2px solid #ddd; }
         .main-logo { width: 100%; height: auto; display: block; }
 
@@ -32,16 +31,10 @@
         /* MATCH CARDS */
         .match-container { background: #DCDCDC; padding: 25px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); border: 1px solid #fff; }
         
-        .player-header { display: flex; justify-content: center; align-items: center; gap: 20px; font-weight: bold; font-size: 1.6rem; margin-bottom: 5px; }
+        .player-header { display: flex; justify-content: center; align-items: center; gap: 20px; font-weight: bold; font-size: 1.6rem; margin-bottom: 15px; }
         .vs-label { font-size: 0.9rem; color: #666; font-style: italic; }
 
-        /* Status Badge Styling */
-        .status-badge { 
-            display: inline-block; padding: 4px 15px; border-radius: 20px; font-size: 1.1rem; 
-            font-weight: bold; margin-bottom: 10px; border: 2px solid rgba(0,0,0,0.1); 
-        }
-
-        .match-result-banner { text-align: center; font-size: 1.6rem; margin: 5px 0 20px 0; padding: 15px; color: white; border-radius: 8px; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .match-result-banner { text-align: center; font-size: 1.6rem; margin: 10px 0 25px 0; padding: 15px; color: white; border-radius: 8px; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
 
         table { border-collapse: collapse; width: 100%; margin-bottom: 15px; background: white; table-layout: fixed; font-size: 1.1rem; }
         th, td { border: 1px solid #bbb; padding: 12px 2px; text-align: center; }
@@ -49,22 +42,22 @@
         
         .row-label { background: #f0f0f0; font-weight: bold; width: 220px; text-align: left; padding-left: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         
+        /* New Status Cell Style */
+        .status-cell { font-size: 0.85rem; font-weight: bold; background: #fafafa; }
+
         /* Score Highlighting */
         .win-cell-p1 { background-color: var(--p1-color) !important; color: white !important; font-weight: bold; }
         .win-cell-p2 { background-color: var(--p2-color) !important; color: white !important; font-weight: bold; }
 
         /* STANDINGS & HISTORY */
         .section-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0; overflow-x: auto; }
-        
         .standings-table { min-width: 900px; width: 100%; }
-        /* Player Column widened by extra 30% (300px -> 390px) */
         .standings-table td:first-child { width: 390px; text-align: left; padding-left: 25px; font-weight: bold; font-size: 1.2rem; }
 
         .history-list { text-align: center; }
         .history-item { padding: 15px; border-bottom: 1px solid #eee; font-size: 1.2rem; display: block; width: 100%; }
         .week-label { background: #333; color: #fff; padding: 8px 20px; border-radius: 25px; font-size: 1rem; margin: 30px 0 15px 0; display: inline-block; }
         
-        /* History Coloring */
         .hist-p1 { color: var(--p1-color); font-weight: bold; }
         .hist-p2 { color: var(--p2-color); font-weight: bold; }
 
@@ -130,19 +123,16 @@
         container.innerHTML = matches.map((m) => {
             const sum = arr => arr.reduce((a, b) => a + (parseInt(b) || 0), 0);
             
-            let p1Status = 0;
+            // Calculate final status for banner
+            let finalStatus = 0;
             for(let i=0; i<18; i++) {
                 let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
-                if(s1 && s2) { if(s1 < s2) p1Status++; else if(s2 < s1) p1Status--; }
+                if(s1 && s2) { if(s1 < s2) finalStatus++; else if(s2 < s1) finalStatus--; }
             }
 
-            const winnerName = p1Status > 0 ? m.p1Name : m.p2Name;
-            const bannerText = p1Status === 0 ? "All Square" : `${winnerName} wins ${Math.abs(p1Status)} UP`;
-            const bannerColor = p1Status === 0 ? "var(--neutral-bg)" : (p1Status > 0 ? "var(--p1-color)" : "var(--p2-color)");
-            
-            // Match Status Indicator logic
-            const statusText = p1Status === 0 ? "A/S" : `${Math.abs(p1Status)} UP`;
-            const statusColor = p1Status === 0 ? "#888" : (p1Status > 0 ? "var(--p1-color)" : "var(--p2-color)");
+            const winnerName = finalStatus > 0 ? m.p1Name : m.p2Name;
+            const bannerText = finalStatus === 0 ? "All Square" : `${winnerName} wins ${Math.abs(finalStatus)} UP`;
+            const bannerColor = finalStatus === 0 ? "var(--neutral-bg)" : (finalStatus > 0 ? "var(--p1-color)" : "var(--p2-color)");
 
             return `
             <div class="carousel-item">
@@ -153,35 +143,54 @@
                         <span style="color:var(--p2-color)">${m.p2Name}</span>
                     </div>
                     
-                    <div style="text-align:center;">
-                        <span class="status-badge" style="color:${statusColor}; border-color:${statusColor}">${statusText}</span>
-                    </div>
-                    
                     <div class="match-result-banner" style="background:${bannerColor}">${bannerText}</div>
                     
-                    ${[0, 9].map((start) => `
-                    <table>
-                        <tr><th class="row-label">Hole</th>${[1,2,3,4,5,6,7,8,9].map(n => `<th>${n+start}</th>`).join('')}<th>OUT</th></tr>
-                        <tr><td class="row-label">Par</td>${m.pars.slice(start, start+9).map(p => `<td>${p}</td>`).join('')}<td>${sum(m.pars.slice(start, start+9))}</td></tr>
-                        <tr>
-                            <td class="row-label">${m.p1Name}</td>
-                            ${m.p1Scores.slice(start, start+9).map((s, i) => {
-                                const p1S = parseInt(s), p2S = parseInt(m.p2Scores[start+i]);
-                                const isWin = p1S && p2S && p1S < p2S ? 'win-cell-p1' : '';
-                                return `<td class="${isWin}">${s || ''}</td>`;
-                            }).join('')}
-                            <td style="background:#eee"><b>${sum(m.p1Scores.slice(start, start+9))}</b></td>
-                        </tr>
-                        <tr>
-                            <td class="row-label">${m.p2Name}</td>
-                            ${m.p2Scores.slice(start, start+9).map((s, i) => {
-                                const p2S = parseInt(s), p1S = parseInt(m.p1Scores[start+i]);
-                                const isWin = p1S && p2S && p2S < p1S ? 'win-cell-p2' : '';
-                                return `<td class="${isWin}">${s || ''}</td>`;
-                            }).join('')}
-                            <td style="background:#eee"><b>${sum(m.p2Scores.slice(start, start+9))}</b></td>
-                        </tr>
-                    </table>`).join('')}
+                    ${[0, 9].map((start) => {
+                        let runningStatus = 0;
+                        // Calculate running status up to the start of this table (for the back 9)
+                        for(let i=0; i<start; i++) {
+                            let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
+                            if(s1 && s2) { if(s1 < s2) runningStatus++; else if(s2 < s1) runningStatus--; }
+                        }
+
+                        return `
+                        <table>
+                            <tr><th class="row-label">Hole</th>${[1,2,3,4,5,6,7,8,9].map(n => `<th>${n+start}</th>`).join('')}<th>${start === 0 ? 'OUT' : 'IN'}</th></tr>
+                            <tr><td class="row-label">Par</td>${m.pars.slice(start, start+9).map(p => `<td>${p}</td>`).join('')}<td>${sum(m.pars.slice(start, start+9))}</td></tr>
+                            <tr>
+                                <td class="row-label">${m.p1Name}</td>
+                                ${m.p1Scores.slice(start, start+9).map((s, i) => {
+                                    const p1S = parseInt(s), p2S = parseInt(m.p2Scores[start+i]);
+                                    const isWin = p1S && p2S && p1S < p2S ? 'win-cell-p1' : '';
+                                    return `<td class="${isWin}">${s || ''}</td>`;
+                                }).join('')}
+                                <td style="background:#eee"><b>${sum(m.p1Scores.slice(start, start+9))}</b></td>
+                            </tr>
+                            <tr>
+                                <td class="row-label">${m.p2Name}</td>
+                                ${m.p2Scores.slice(start, start+9).map((s, i) => {
+                                    const p2S = parseInt(s), p1S = parseInt(m.p1Scores[start+i]);
+                                    const isWin = p1S && p2S && p2S < p1S ? 'win-cell-p2' : '';
+                                    return `<td class="${isWin}">${s || ''}</td>`;
+                                }).join('')}
+                                <td style="background:#eee"><b>${sum(m.p2Scores.slice(start, start+9))}</b></td>
+                            </tr>
+                            <tr>
+                                <td class="row-label" style="font-size:0.8rem; color:#666;">Match Status</td>
+                                ${m.p1Scores.slice(start, start+9).map((s, i) => {
+                                    const p1S = parseInt(s), p2S = parseInt(m.p2Scores[start+i]);
+                                    if(p1S && p2S) {
+                                        if(p1S < p2S) runningStatus++; else if(p2S < p1S) runningStatus--;
+                                        const display = runningStatus === 0 ? "A/S" : `${Math.abs(runningStatus)} UP`;
+                                        const color = runningStatus === 0 ? "#888" : (runningStatus > 0 ? "var(--p1-color)" : "var(--p2-color)");
+                                        return `<td class="status-cell" style="color:${color}">${display}</td>`;
+                                    }
+                                    return `<td class="status-cell"></td>`;
+                                }).join('')}
+                                <td style="background:#eee"></td>
+                            </tr>
+                        </table>`;
+                    }).join('')}
                     <div style="text-align:center; font-size:1rem; font-style:italic; color:#777;">${m.venue}</div>
                 </div>
             </div>`;
@@ -217,24 +226,16 @@
         document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => {
             const coloredResults = w.results.map(r => {
                 let html = r.html;
-                // Identify the winning player class to color the result portion
                 const winClass = html.includes('win-p1') ? 'hist-p1' : (html.includes('win-p2') ? 'hist-p2' : '');
-                
-                // Color P1 Name
                 html = html.replace(new RegExp(r.p1, 'g'), `<span class="hist-p1">${r.p1}</span>`);
-                // Color P2 Name
                 html = html.replace(new RegExp(r.p2, 'g'), `<span class="hist-p2">${r.p2}</span>`);
-                
-                // If there's a winner, wrap the trailing result (like 3&1) in that player's color
                 if (winClass) {
                    const parts = html.split('</span>');
                    const lastPart = parts.pop();
                    html = parts.join('</span>') + `</span><span class="${winClass}">${lastPart}</span>`;
                 }
-                
                 return `<div class="history-item">${html}</div>`;
             }).join('');
-            
             return `<div class="week-label">${w.label}</div>${coloredResults}`;
         }).join('');
     }
