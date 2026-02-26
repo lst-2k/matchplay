@@ -3,108 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golf League Standings</title>
+    <title>Golf League Hub</title>
     <style>
-        :root { --p1-color: #1976d2; --p2-color: #d32f2f; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #eef2ee; color: #333; padding: 20px; }
+        :root { --p1-color: #1976d2; --p2-color: #d32f2f; --neutral-bg: #555; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding: 10px; padding-bottom: 50px; }
         .container { max-width: 800px; margin: 0 auto; }
-        h1, h2 { text-align: center; color: #2e7d32; }
-        
-        .section-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        
-        /* Standings Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: #333; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        tr:nth-child(even) { background: #fafafa; }
-        .pts-col { font-weight: bold; background: #f4f4f4; text-align: center; }
-        .stat-col { text-align: center; }
+        h1, h2 { text-align: center; color: #2e7d32; margin-top: 30px; }
 
-        /* History */
-        .week-label { background: #333; color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; margin: 20px 0 10px 0; display: inline-block; }
-        .history-item { padding: 10px; border-bottom: 1px solid #eee; font-size: 1.1rem; }
-        .win-p1 { color: var(--p1-color); font-weight: bold; margin-right: 8px; }
-        .win-p2 { color: var(--p2-color); font-weight: bold; margin-left: 8px; }
+        /* CAROUSEL STYLES */
+        .carousel-wrapper { 
+            display: flex; overflow-x: auto; gap: 20px; padding: 10px 0 20px 0;
+            scroll-snap-type: x mandatory; border-radius: 12px;
+        }
+        .carousel-item { flex: 0 0 100%; scroll-snap-align: center; }
+        @media (min-width: 768px) { .carousel-item { flex: 0 0 600px; } .carousel-wrapper { justify-content: center; } }
+
+        .match-container { background: #DCDCDC; padding: 15px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .card-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .venue-display { text-align: center; font-style: italic; font-size: 0.9rem; margin-bottom: 10px; color: #444; }
+        .match-result-banner { text-align: center; font-size: 1.1rem; margin: 5px 0; padding: 8px; color: white; border-radius: 6px; font-weight: bold; }
         
-        .loading { text-align: center; font-style: italic; color: #666; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 10px; background: white; table-layout: fixed; font-size: 0.7rem; }
+        th, td { border: 1px solid #bbb; padding: 4px 1px; text-align: center; }
+        th { background: #444; color: white; }
+        .row-label { background: #f0f0f0; font-weight: bold; width: 90px; text-align: left; padding-left: 5px; }
+        .total-col { background: #eee; font-weight: bold; width: 30px; }
+        .stat-p1 { background: var(--p1-color) !important; color: white; }
+        .stat-p2 { background: var(--p2-color) !important; color: white; }
+        .stat-as { background: #eee; color: #666; }
+
+        /* STANDINGS & HISTORY */
+        .section-box { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .history-item { padding: 8px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        .win-p1 { color: var(--p1-color); font-weight: bold; }
+        .win-p2 { color: var(--p2-color); font-weight: bold; }
+        .week-label { background: #333; color: #fff; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; margin: 15px 0 5px 0; display: inline-block; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏆 League Leaderboard</h1>
+    <h1>⛳ Live Match Scorecards</h1>
+    <div class="carousel-wrapper" id="carousel-view">
+        <p style="text-align:center; width:100%">Loading current matches...</p>
+    </div>
 
     <div class="section-box">
-        <h2>Current Standings</h2>
-        <table id="standings-table">
+        <h2>League Standings</h2>
+        <table>
             <thead>
-                <tr>
-                    <th>Player</th>
-                    <th class="stat-col">W</th>
-                    <th class="stat-col">D</th>
-                    <th class="stat-col">L</th>
-                    <th class="stat-col">Pts</th>
+                <tr style="background: #333; color: white;">
+                    <th style="padding: 8px; text-align: left;">Player</th>
+                    <th>W</th><th>D</th><th>L</th><th>Pts</th>
                 </tr>
             </thead>
-            <tbody id="points-body">
-                <tr><td colspan="5" class="loading">Loading standings...</td></tr>
-            </tbody>
+            <tbody id="points-body"></tbody>
         </table>
     </div>
 
     <div class="section-box">
-        <h2>Weekly Match Results</h2>
-        <div id="history-list">
-            <p class="loading">Loading match history...</p>
-        </div>
+        <h2>Recent History</h2>
+        <div id="history-list"></div>
     </div>
 </div>
 
 <script>
-    // URL to your data file on GitHub
-    const DATA_URL = 'data.json'; 
+    const DATA_URL = 'data.json';
 
-    async function loadLeagueData() {
+    async function loadData() {
         try {
             const response = await fetch(DATA_URL);
             const data = await response.json();
+            
+            // Render the "Live" cards from the 'matches' array in data.json
+            renderCarousel(data.matches);
+            // Render history and standings from 'history' array
             renderPoints(data.history);
             renderHistory(data.history);
-        } catch (err) {
-            console.error("Error loading data:", err);
-            document.getElementById('history-list').innerHTML = "<p>No data published yet.</p>";
+        } catch (e) {
+            document.getElementById('carousel-view').innerHTML = "<p>Upload data.json to see live cards.</p>";
         }
+    }
+
+    function renderCarousel(matches) {
+        if (!matches || matches.length === 0) return;
+        const container = document.getElementById('carousel-view');
+        container.innerHTML = '';
+        
+        matches.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'carousel-item';
+            
+            // Re-calculate totals for display
+            const sum = (arr) => arr.reduce((a, b) => a + (parseInt(b) || 0), 0);
+            const out1 = sum(m.p1Scores.slice(0,9)), in1 = sum(m.p1Scores.slice(9,18));
+            const out2 = sum(m.p2Scores.slice(0,9)), in2 = sum(m.p2Scores.slice(9,18));
+            const pOut = sum(m.pars.slice(0,9)), pIn = sum(m.pars.slice(9,18));
+
+            div.innerHTML = `
+                <div class="match-container">
+                    <div class="card-header">
+                        <h3 style="color:var(--p1-color);margin:0">${m.p1Name}</h3>
+                        <span style="font-size:0.7rem">VS</span>
+                        <h3 style="color:var(--p2-color);margin:0">${m.p2Name}</h3>
+                    </div>
+                    <div class="venue-display">${m.venue || "TBD"}</div>
+                    
+                    ${[0, 9].map((start, idx) => `
+                    <table>
+                        <tr><th class="row-label">Hole</th>${[1,2,3,4,5,6,7,8,9].map(n => `<th>${n+start}</th>`).join('')}<th>${idx===0?'OUT':'IN'}</th></tr>
+                        <tr><td class="row-label">Par</td>${m.pars.slice(start, start+9).map(p => `<td>${p}</td>`).join('')}<td class="total-col">${idx===0?pOut:pIn}</td></tr>
+                        <tr><td class="row-label">${m.p1Name}</td>${m.p1Scores.slice(start, start+9).map(s => `<td>${s}</td>`).join('')}<td class="total-col">${idx===0?out1:in1}</td></tr>
+                        <tr><td class="row-label">${m.p2Name}</td>${m.p2Scores.slice(start, start+9).map(s => `<td>${s}</td>`).join('')}<td class="total-col">${idx===0?out2:in2}</td></tr>
+                    </table>`).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        });
     }
 
     function renderPoints(history) {
         const stats = {};
         history.forEach(w => {
             w.results.forEach(r => {
-                [r.p1, r.p2].forEach(name => {
-                    if (!stats[name]) stats[name] = { w: 0, d: 0, l: 0, pts: 0 };
-                });
-                
-                // Logic to extract winner from the HTML result string
-                if (r.html.includes('win-p1')) {
-                    stats[r.p1].w++; stats[r.p1].pts += 2; stats[r.p2].l++;
-                } else if (r.html.includes('win-p2')) {
-                    stats[r.p2].w++; stats[r.p2].pts += 2; stats[r.p1].l++;
-                } else {
-                    stats[r.p1].d++; stats[r.p1].pts += 1;
-                    stats[r.p2].d++; stats[r.p2].pts += 1;
-                }
+                [r.p1, r.p2].forEach(p => { if(!stats[p]) stats[p] = {w:0,d:0,l:0,pts:0}; });
+                if(r.html.includes('win-p1')) { stats[r.p1].w++; stats[r.p1].pts+=2; stats[r.p2].l++; }
+                else if(r.html.includes('win-p2')) { stats[r.p2].w++; stats[r.p2].pts+=2; stats[r.p1].l++; }
+                else { stats[r.p1].d++; stats[r.p1].pts+=1; stats[r.p2].d++; stats[r.p2].pts+=1; }
             });
         });
-
         const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
         document.getElementById('points-body').innerHTML = sorted.map(n => `
-            <tr>
-                <td style="font-weight:bold">${n}</td>
-                <td class="stat-col">${stats[n].w}</td>
-                <td class="stat-col">${stats[n].d}</td>
-                <td class="stat-col">${stats[n].l}</td>
-                <td class="pts-col">${stats[n].pts}</td>
-            </tr>`).join('');
+            <tr><td style="font-weight:bold;padding:8px">${n}</td><td align="center">${stats[n].w}</td><td align="center">${stats[n].d}</td><td align="center">${stats[n].l}</td><td align="center" style="background:#eee;font-weight:bold">${stats[n].pts}</td></tr>
+        `).join('');
     }
 
     function renderHistory(history) {
@@ -114,8 +145,7 @@
         `).join('');
     }
 
-    loadLeagueData();
+    loadData();
 </script>
-
 </body>
 </html>
