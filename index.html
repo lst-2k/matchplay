@@ -32,10 +32,16 @@
         /* MATCH CARDS */
         .match-container { background: #DCDCDC; padding: 25px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); border: 1px solid #fff; }
         
-        .player-header { display: flex; justify-content: center; align-items: center; gap: 20px; font-weight: bold; font-size: 1.6rem; margin-bottom: 10px; }
+        .player-header { display: flex; justify-content: center; align-items: center; gap: 20px; font-weight: bold; font-size: 1.6rem; margin-bottom: 5px; }
         .vs-label { font-size: 0.9rem; color: #666; font-style: italic; }
 
-        .match-result-banner { text-align: center; font-size: 1.6rem; margin: 10px 0 20px 0; padding: 15px; color: white; border-radius: 8px; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        /* Status Badge Styling */
+        .status-badge { 
+            display: inline-block; padding: 4px 15px; border-radius: 20px; font-size: 1.1rem; 
+            font-weight: bold; margin-bottom: 10px; border: 2px solid rgba(0,0,0,0.1); 
+        }
+
+        .match-result-banner { text-align: center; font-size: 1.6rem; margin: 5px 0 20px 0; padding: 15px; color: white; border-radius: 8px; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
 
         table { border-collapse: collapse; width: 100%; margin-bottom: 15px; background: white; table-layout: fixed; font-size: 1.1rem; }
         th, td { border: 1px solid #bbb; padding: 12px 2px; text-align: center; }
@@ -50,14 +56,15 @@
         /* STANDINGS & HISTORY */
         .section-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0; overflow-x: auto; }
         
-        .standings-table { min-width: 800px; width: 100%; }
-        .standings-table td:first-child { width: 300px; text-align: left; padding-left: 25px; font-weight: bold; font-size: 1.2rem; }
+        .standings-table { min-width: 900px; width: 100%; }
+        /* Player Column widened by extra 30% (300px -> 390px) */
+        .standings-table td:first-child { width: 390px; text-align: left; padding-left: 25px; font-weight: bold; font-size: 1.2rem; }
 
         .history-list { text-align: center; }
         .history-item { padding: 15px; border-bottom: 1px solid #eee; font-size: 1.2rem; display: block; width: 100%; }
         .week-label { background: #333; color: #fff; padding: 8px 20px; border-radius: 25px; font-size: 1rem; margin: 30px 0 15px 0; display: inline-block; }
         
-        /* History Name Colors */
+        /* History Coloring */
         .hist-p1 { color: var(--p1-color); font-weight: bold; }
         .hist-p2 { color: var(--p2-color); font-weight: bold; }
 
@@ -67,7 +74,8 @@
             .row-label { width: 90px; padding-left: 5px; }
             .player-header { font-size: 1.1rem; }
             .match-result-banner { font-size: 1.2rem; }
-            .standings-table { min-width: 600px; }
+            .standings-table { min-width: 650px; }
+            .standings-table td:first-child { width: 200px; }
         }
     </style>
 </head>
@@ -131,6 +139,10 @@
             const winnerName = p1Status > 0 ? m.p1Name : m.p2Name;
             const bannerText = p1Status === 0 ? "All Square" : `${winnerName} wins ${Math.abs(p1Status)} UP`;
             const bannerColor = p1Status === 0 ? "var(--neutral-bg)" : (p1Status > 0 ? "var(--p1-color)" : "var(--p2-color)");
+            
+            // Match Status Indicator logic
+            const statusText = p1Status === 0 ? "A/S" : `${Math.abs(p1Status)} UP`;
+            const statusColor = p1Status === 0 ? "#888" : (p1Status > 0 ? "var(--p1-color)" : "var(--p2-color)");
 
             return `
             <div class="carousel-item">
@@ -139,6 +151,10 @@
                         <span style="color:var(--p1-color)">${m.p1Name}</span>
                         <span class="vs-label">vs</span>
                         <span style="color:var(--p2-color)">${m.p2Name}</span>
+                    </div>
+                    
+                    <div style="text-align:center;">
+                        <span class="status-badge" style="color:${statusColor}; border-color:${statusColor}">${statusText}</span>
                     </div>
                     
                     <div class="match-result-banner" style="background:${bannerColor}">${bannerText}</div>
@@ -199,11 +215,23 @@
 
     function renderHistory(history) {
         document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => {
-            // Apply color to player names in history strings dynamically
             const coloredResults = w.results.map(r => {
                 let html = r.html;
+                // Identify the winning player class to color the result portion
+                const winClass = html.includes('win-p1') ? 'hist-p1' : (html.includes('win-p2') ? 'hist-p2' : '');
+                
+                // Color P1 Name
                 html = html.replace(new RegExp(r.p1, 'g'), `<span class="hist-p1">${r.p1}</span>`);
+                // Color P2 Name
                 html = html.replace(new RegExp(r.p2, 'g'), `<span class="hist-p2">${r.p2}</span>`);
+                
+                // If there's a winner, wrap the trailing result (like 3&1) in that player's color
+                if (winClass) {
+                   const parts = html.split('</span>');
+                   const lastPart = parts.pop();
+                   html = parts.join('</span>') + `</span><span class="${winClass}">${lastPart}</span>`;
+                }
+                
                 return `<div class="history-item">${html}</div>`;
             }).join('');
             
