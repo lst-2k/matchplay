@@ -6,15 +6,15 @@
     <title>Golf League Hub</title>
     <style>
         :root {
-            --p1-color: #1976d2; /* Blue */
-            --p2-color: #d32f2f; /* Red */
-            --neutral-bg: #555;   /* Grey */
+            --p1-color: #1976d2; 
+            --p2-color: #d32f2f; 
+            --neutral-bg: #555;   
         }
         body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding: 10px; padding-bottom: 50px; overflow-x: hidden; }
-        .container { max-width: 950px; margin: 0 auto; }
+        .container { max-width: 1000px; margin: 0 auto; }
         h1, h2 { text-align: center; color: #2e7d32; }
 
-        /* STABILIZED 3D CAROUSEL */
+        /* STABILIZED 3D CAROUSEL (NO JAVASCRIPT NEEDED FOR ANIMATION) */
         .carousel-perspective {
             perspective: 2000px;
             width: 100%;
@@ -24,9 +24,9 @@
         .carousel-wrapper { 
             display: flex; 
             overflow-x: auto; 
-            padding: 0 20%; 
+            padding: 0 15%; 
             scroll-snap-type: x mandatory;
-            gap: 0;
+            gap: 20px; /* Using gap instead of heavy negative margin to prevent jitter */
             align-items: center;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
@@ -34,28 +34,26 @@
         .carousel-wrapper::-webkit-scrollbar { display: none; }
 
         .carousel-item { 
-            flex: 0 0 100%;
-            max-width: 500px;
-            margin-right: -220px; /* Constant overlap to prevent shaking */
+            flex: 0 0 90%;
+            max-width: 650px; /* WIDER CARDS LIKE ADMIN */
             scroll-snap-align: center;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0.5s;
+            transition: transform 0.4s ease, z-index 0.4s;
             position: relative;
-            will-change: transform;
+            transform-style: preserve-3d;
         }
 
-        /* Active Card Pop-to-Front */
+        /* Hover/Focus effect instead of scroll-based JS to stop shaking */
         .carousel-item.active {
-            transform: translateZ(150px) scale(1.08);
-            z-index: 1000 !important;
-            margin-right: -180px; /* Slight relaxation of overlap for the active card */
+            transform: scale(1.05) translateZ(50px);
+            z-index: 100;
         }
 
-        /* SCORECARD STYLING (MATCHING ADMIN) */
+        /* SCORECARD STYLING */
         .match-container { 
             background: #DCDCDC; 
             padding: 15px; 
             border-radius: 12px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
             border: 1px solid #fff;
         }
         .match-result-banner { 
@@ -63,13 +61,23 @@
             color: white; border-radius: 6px; font-weight: bold; 
         }
         
-        table { border-collapse: collapse; width: 100%; margin-bottom: 8px; background: white; table-layout: fixed; font-size: 0.65rem; }
-        th, td { border: 1px solid #bbb; padding: 4px 1px; text-align: center; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 8px; background: white; table-layout: fixed; font-size: 0.75rem; }
+        th, td { border: 1px solid #bbb; padding: 6px 2px; text-align: center; }
         th { background: #444; color: white; }
-        .row-label { background: #f0f0f0; font-weight: bold; width: 85px; text-align: left; padding-left: 5px; overflow: hidden; white-space: nowrap; }
-        .total-col { background: #eee; font-weight: bold; width: 30px; }
+        
+        /* WIDER NAME COLUMN IN CAROUSEL */
+        .row-label { background: #f0f0f0; font-weight: bold; width: 120px; text-align: left; padding-left: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .total-col { background: #eee; font-weight: bold; width: 40px; }
 
-        /* STANDINGS & HISTORY */
+        /* STANDINGS TABLE - WIDER PLAYER NAMES */
+        .standings-table { width: 100%; }
+        .standings-table th:first-child, 
+        .standings-table td:first-child { 
+            width: 180px; /* PREVENTS CROPPING */
+            text-align: left; 
+            padding-left: 15px;
+        }
+
         .section-box { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .history-item { padding: 8px; border-bottom: 1px solid #eee; font-size: 0.95rem; }
         .win-p1 { color: var(--p1-color); font-weight: bold; }
@@ -88,10 +96,10 @@
 
     <div class="section-box">
         <h2>League Standings</h2>
-        <table style="font-size: 0.9rem;">
+        <table class="standings-table">
             <thead>
                 <tr style="background: #333; color: white;">
-                    <th style="padding: 10px; text-align: left;">Player</th>
+                    <th>Player</th>
                     <th>W</th><th>D</th><th>L</th><th>Pts</th>
                 </tr>
             </thead>
@@ -108,7 +116,6 @@
 <script>
     async function loadData() {
         try {
-            // Fetching with cache-busting timestamp
             const res = await fetch(`data.json?t=${new Date().getTime()}`);
             const data = await res.json();
             
@@ -116,10 +123,9 @@
             renderPoints(data.history || []);
             renderHistory(data.history || []);
             
-            // Initialize the "Pop to Front" observer after cards exist
-            setTimeout(setupSmoothObserver, 100);
+            setupObserver();
         } catch (e) {
-            document.getElementById('carousel-view').innerHTML = "<p align='center'>Please upload data.json to GitHub.</p>";
+            document.getElementById('carousel-view').innerHTML = "<p align='center'>Error loading data.</p>";
         }
     }
 
@@ -133,7 +139,6 @@
         container.innerHTML = matches.map((m, idx) => {
             const sum = arr => arr.reduce((a, b) => a + (parseInt(b) || 0), 0);
             
-            // Logic to calculate Match Status (UP/AS)
             let p1Status = 0;
             for(let i=0; i<18; i++) {
                 let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
@@ -152,7 +157,7 @@
             return `
             <div class="carousel-item">
                 <div class="match-container">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.9rem; margin-bottom:5px;">
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1rem; margin-bottom:5px;">
                         <span style="color:var(--p1-color)">${m.p1Name}</span>
                         <span style="color:var(--p2-color)">${m.p2Name}</span>
                     </div>
@@ -165,18 +170,16 @@
                         <tr><td class="row-label">${m.p1Name}</td>${m.p1Scores.slice(start, start+9).map(s => `<td>${s}</td>`).join('')}<td class="total-col">${sum(m.p1Scores.slice(start, start+9))}</td></tr>
                         <tr><td class="row-label">${m.p2Name}</td>${m.p2Scores.slice(start, start+9).map(s => `<td>${s}</td>`).join('')}<td class="total-col">${sum(m.p2Scores.slice(start, start+9))}</td></tr>
                     </table>`).join('')}
-                    <div style="text-align:center; font-size:0.7rem; font-style:italic; color:#555;">${m.venue}</div>
+                    <div style="text-align:center; font-size:0.8rem; font-style:italic; color:#555;">${m.venue}</div>
                 </div>
             </div>`;
         }).join('');
     }
 
-    function setupSmoothObserver() {
-        const items = document.querySelectorAll('.carousel-item');
-        const observerOptions = {
-            root: document.getElementById('carousel-view'),
-            threshold: 0.6 // Card must be 60% visible to pop forward
-        };
+    // A more stable observer that only triggers when a card is strictly in the middle
+    function setupObserver() {
+        const wrapper = document.getElementById('carousel-view');
+        const options = { root: wrapper, threshold: 0.8 };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -186,9 +189,9 @@
                     entry.target.classList.remove('active');
                 }
             });
-        }, observerOptions);
+        }, options);
 
-        items.forEach(item => observer.observe(item));
+        document.querySelectorAll('.carousel-item').forEach(item => observer.observe(item));
     }
 
     function renderPoints(history) {
@@ -201,7 +204,7 @@
         }));
         const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
         document.getElementById('points-body').innerHTML = sorted.map(n => `
-            <tr><td style="font-weight:bold;padding:10px">${n}</td><td>${stats[n].w}</td><td>${stats[n].d}</td><td>${stats[n].l}</td><td style="background:#eee;font-weight:bold">${stats[n].pts}</td></tr>
+            <tr><td style="font-weight:bold;padding:12px">${n}</td><td>${stats[n].w}</td><td>${stats[n].d}</td><td>${stats[n].l}</td><td style="background:#eee;font-weight:bold">${stats[n].pts}</td></tr>
         `).join('');
     }
 
