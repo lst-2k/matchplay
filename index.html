@@ -15,64 +15,71 @@
         .logo-container { width: 100%; line-height: 0; background: #fff; border-bottom: 2px solid #ddd; }
         .main-logo { width: 100%; height: auto; display: block; }
 
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 10px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 5px; }
         h2 { text-align: center; color: #2e7d32; margin-top: 40px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* CAROUSEL */
         .carousel-perspective { perspective: 2500px; width: 100%; overflow: hidden; padding: 20px 0; }
         .carousel-wrapper { 
-            display: flex; overflow-x: auto; padding: 0 5%; scroll-snap-type: x mandatory;
-            gap: 50px; align-items: center; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+            display: flex; overflow-x: auto; padding: 0 2%; scroll-snap-type: x mandatory;
+            gap: 20px; align-items: center; -webkit-overflow-scrolling: touch; scrollbar-width: none;
         }
         .carousel-wrapper::-webkit-scrollbar { display: none; }
-        .carousel-item { flex: 0 0 95%; max-width: 1300px; scroll-snap-align: center; transition: 0.4s; position: relative; }
-        .carousel-item.active { transform: scale(1.01); z-index: 100; }
+        .carousel-item { flex: 0 0 98%; max-width: 1300px; scroll-snap-align: center; transition: 0.4s; position: relative; }
 
-        /* MATCH CARDS */
-        .match-container { background: #DCDCDC; padding: 25px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); border: 1px solid #fff; }
-        .player-header { display: flex; justify-content: center; align-items: center; gap: 20px; font-weight: bold; font-size: 1.6rem; margin-bottom: 15px; }
-        .vs-label { font-size: 0.9rem; color: #666; font-style: italic; }
-        .match-result-banner { text-align: center; font-size: 1.6rem; margin: 10px 0 25px 0; padding: 15px; color: white; border-radius: 8px; font-weight: bold; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        /* MATCH CARDS & SCROLLING */
+        .match-container { background: #DCDCDC; padding: 15px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #fff; }
+        .player-header { display: flex; justify-content: center; align-items: center; gap: 15px; font-weight: bold; font-size: 1.4rem; margin-bottom: 10px; }
+        .vs-label { font-size: 0.8rem; color: #666; font-style: italic; }
+        .match-result-banner { text-align: center; font-size: 1.4rem; margin: 5px 0 15px 0; padding: 12px; color: white; border-radius: 8px; font-weight: bold; }
 
-        /* WIDER SCORECARD CELLS */
-        table { border-collapse: collapse; width: 100%; margin-bottom: 15px; background: white; table-layout: fixed; font-size: 1.1rem; }
-        th, td { border: 1px solid #bbb; padding: 12px 2px; text-align: center; min-width: 45px; } /* Increased min-width for status */
+        /* The scroll fix for mobile scorecard width */
+        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; border-radius: 4px; }
+        table { border-collapse: collapse; min-width: 650px; width: 100%; background: white; table-layout: fixed; font-size: 1rem; }
+        th, td { border: 1px solid #bbb; padding: 10px 2px; text-align: center; }
         th { background: #444; color: white; }
         
-        .row-label { background: #f0f0f0; font-weight: bold; width: 220px; text-align: left; padding-left: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .status-cell { font-size: 0.85rem; font-weight: bold; background: #fafafa; min-width: 55px; }
+        .row-label { background: #f0f0f0; font-weight: bold; width: 140px; text-align: left; padding-left: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .status-cell { font-size: 0.85rem; font-weight: bold; background: #fafafa; }
 
         .win-cell-p1 { background-color: var(--p1-color) !important; color: white !important; font-weight: bold; }
         .win-cell-p2 { background-color: var(--p2-color) !important; color: white !important; font-weight: bold; }
 
-        /* WIDER STANDINGS PLAYER COLUMN */
-        .section-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0; overflow-x: auto; }
-        .standings-table { min-width: 1000px; width: 100%; }
+        /* STANDINGS - EXTRA WIDE NAMES */
+        .section-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin: 20px 5px; overflow-x: auto; }
+        .standings-table { min-width: 900px; width: 100%; }
         .standings-table td:first-child { 
-            width: 500px; /* Increased by 30% + buffer */
+            width: 480px; 
             text-align: left; 
-            padding-left: 25px; 
+            padding-left: 20px; 
             font-weight: bold; 
-            font-size: 1.2rem; 
-            white-space: nowrap; /* Prevents spilling into next column */
+            font-size: 1.05rem; 
+            white-space: nowrap; 
         }
 
+        /* HISTORY - PERFECTLY CENTERED */
         .history-list { text-align: center; }
-        .history-item { padding: 15px; border-bottom: 1px solid #eee; font-size: 1.2rem; display: block; width: 100%; }
-        .week-label { background: #333; color: #fff; padding: 8px 20px; border-radius: 25px; font-size: 1rem; margin: 30px 0 15px 0; display: inline-block; }
+        .history-item { 
+            padding: 12px; 
+            border-bottom: 1px solid #eee; 
+            font-size: 1.1rem; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+        .hist-side { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .hist-side.p1 { text-align: right; padding-right: 15px; color: var(--p1-color); font-weight: bold; }
+        .hist-side.p2 { text-align: left; padding-left: 15px; color: var(--p2-color); font-weight: bold; }
+        .hist-center { min-width: 100px; text-align: center; font-weight: bold; background: #f4f4f4; padding: 4px 10px; border-radius: 4px; font-size: 0.95rem; }
         
-        .hist-p1 { color: var(--p1-color); font-weight: bold; }
-        .hist-p2 { color: var(--p2-color); font-weight: bold; }
+        .week-label { background: #333; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 0.9rem; margin: 25px 0 10px 0; display: inline-block; }
 
-        @media (max-width: 800px) {
-            .carousel-wrapper { padding: 0 2%; gap: 15px; }
-            table { font-size: 0.7rem; }
-            .row-label { width: 90px; padding-left: 5px; }
+        @media (max-width: 600px) {
             .player-header { font-size: 1.1rem; }
-            .match-result-banner { font-size: 1.2rem; }
-            .standings-table { min-width: 700px; }
+            .match-result-banner { font-size: 1.1rem; }
             .standings-table td:first-child { width: 250px; }
-            th, td { min-width: 30px; }
+            .hist-side { font-size: 0.9rem; }
+            .hist-center { min-width: 80px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -92,7 +99,7 @@
         <table class="standings-table">
             <thead>
                 <tr style="background: #333; color: white;">
-                    <th>Player</th><th>W</th><th>D</th><th>L</th><th>Points</th>
+                    <th>Player</th><th>Wins</th><th>All Square</th><th>Losses</th><th>Points</th>
                 </tr>
             </thead>
             <tbody id="points-body"></tbody>
@@ -114,13 +121,13 @@
             renderPoints(data.history || []);
             renderHistory(data.history || []);
             setupObserver();
-        } catch (e) { console.error("Data load error:", e); }
+        } catch (e) { console.error("Data Error:", e); }
     }
 
     function renderCarousel(matches) {
         const container = document.getElementById('carousel-view');
         if (matches.length === 0) {
-            container.innerHTML = "<p style='width:100%; text-align:center;'>No active matches found.</p>";
+            container.innerHTML = "<p align='center'>No matches live.</p>";
             return;
         }
 
@@ -152,6 +159,7 @@
                             if(s1 && s2) { if(s1 < s2) runningStatus++; else if(s2 < s1) runningStatus--; }
                         }
                         return `
+                        <div class="table-scroll">
                         <table>
                             <tr><th class="row-label">Hole</th>${[1,2,3,4,5,6,7,8,9].map(n => `<th>${n+start}</th>`).join('')}<th>${start === 0 ? 'OUT' : 'IN'}</th></tr>
                             <tr><td class="row-label">Par</td>${m.pars.slice(start, start+9).map(p => `<td>${p}</td>`).join('')}<td>${sum(m.pars.slice(start, start+9))}</td></tr>
@@ -174,7 +182,7 @@
                                 <td style="background:#eee"><b>${sum(m.p2Scores.slice(start, start+9))}</b></td>
                             </tr>
                             <tr>
-                                <td class="row-label" style="font-size:0.8rem; color:#666;">Match Status</td>
+                                <td class="row-label" style="font-size:0.75rem; color:#777;">Status</td>
                                 ${m.p1Scores.slice(start, start+9).map((s, i) => {
                                     const p1S = parseInt(s), p2S = parseInt(m.p2Scores[start+i]);
                                     if(p1S && p2S) {
@@ -187,10 +195,59 @@
                                 }).join('')}
                                 <td style="background:#eee"></td>
                             </tr>
-                        </table>`;
+                        </table>
+                        </div>`;
                     }).join('')}
                 </div>
             </div>`;
+        }).join('');
+    }
+
+    function renderPoints(history) {
+        const stats = {};
+        history.forEach(w => w.results.forEach(r => {
+            [r.p1, r.p2].forEach(p => { if(!stats[p]) stats[p] = {w:0,d:0,l:0,pts:0}; });
+            if(r.text && r.text.includes('v') && !r.text.includes('A/S')) {
+                const parts = r.text.split(' ');
+                const winner = parts[0];
+                const loser = parts[2];
+                if(stats[winner]) { stats[winner].w++; stats[winner].pts+=2; }
+                if(stats[loser]) { stats[loser].l++; }
+            } else {
+                if(stats[r.p1]) { stats[r.p1].d++; stats[r.p1].pts+=1; }
+                if(stats[r.p2]) { stats[r.p2].d++; stats[r.p2].pts+=1; }
+            }
+        }));
+        const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
+        document.getElementById('points-body').innerHTML = sorted.map(n => `
+            <tr><td>${n}</td><td>${stats[n].w}</td><td>${stats[n].d}</td><td>${stats[n].l}</td><td style="background:#f9f9f9;font-weight:bold">${stats[n].pts}</td></tr>
+        `).join('');
+    }
+
+    function renderHistory(history) {
+        document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => {
+            const items = w.results.map(r => {
+                const isAS = r.text.toLowerCase().includes('a/s');
+                const centerText = isAS ? "A/S" : "v";
+                
+                // Extract score (e.g., 3&1 or 4&3)
+                const parts = r.text.split(' ');
+                const score = parts[parts.length - 1];
+                const winnerName = parts[0];
+
+                let winClass = "";
+                if(!isAS) winClass = (winnerName === r.p1) ? "hist-p1" : "hist-p2";
+
+                return `
+                <div class="history-item">
+                    <div class="hist-side p1">${r.p1}</div>
+                    <div class="hist-center">
+                        ${centerText} <span class="${winClass}">${!isAS ? score : ''}</span>
+                    </div>
+                    <div class="hist-side p2">${r.p2}</div>
+                </div>`;
+            }).join('');
+            return `<div class="week-label">${w.label}</div>${items}`;
         }).join('');
     }
 
@@ -203,38 +260,6 @@
             });
         }, options);
         document.querySelectorAll('.carousel-item').forEach(item => observer.observe(item));
-    }
-
-    function renderPoints(history) {
-        const stats = {};
-        history.forEach(w => w.results.forEach(r => {
-            [r.p1, r.p2].forEach(p => { if(!stats[p]) stats[p] = {w:0,d:0,l:0,pts:0}; });
-            if(r.html && r.html.includes('win-p1')) { stats[r.p1].w++; stats[r.p1].pts+=2; stats[r.p2].l++; }
-            else if(r.html && r.html.includes('win-p2')) { stats[r.p2].w++; stats[r.p2].pts+=2; stats[r.p1].l++; }
-            else { stats[r.p1].d++; stats[r.p1].pts+=1; stats[r.p2].d++; stats[r.p2].pts+=1; }
-        }));
-        const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
-        document.getElementById('points-body').innerHTML = sorted.map(n => `
-            <tr><td>${n}</td><td>${stats[n].w}</td><td>${stats[n].d}</td><td>${stats[n].l}</td><td style="background:#f9f9f9;font-weight:bold">${stats[n].pts}</td></tr>
-        `).join('');
-    }
-
-    function renderHistory(history) {
-        document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => {
-            const coloredResults = w.results.map(r => {
-                let html = r.html;
-                const winClass = html.includes('win-p1') ? 'hist-p1' : (html.includes('win-p2') ? 'hist-p2' : '');
-                html = html.replace(new RegExp(r.p1, 'g'), `<span class="hist-p1">${r.p1}</span>`);
-                html = html.replace(new RegExp(r.p2, 'g'), `<span class="hist-p2">${r.p2}</span>`);
-                if (winClass) {
-                   const parts = html.split('</span>');
-                   const lastPart = parts.pop();
-                   html = parts.join('</span>') + `</span><span class="${winClass}">${lastPart}</span>`;
-                }
-                return `<div class="history-item">${html}</div>`;
-            }).join('');
-            return `<div class="week-label">${w.label}</div>${coloredResults}`;
-        }).join('');
     }
     loadData();
 </script>
