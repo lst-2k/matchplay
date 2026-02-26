@@ -16,81 +16,76 @@
         .main-logo { width: 100%; height: auto; display: block; }
 
         .container { max-width: 1400px; margin: 0 auto; padding: 0 10px; }
-        h2 { text-align: center; color: #2e7d32; margin-top: 40px; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { text-align: center; color: #2e7d32; margin-top: 30px; text-transform: uppercase; letter-spacing: 1px; font-size: 1.2rem; }
 
-        /* CAROUSEL - LEFT ALIGNED */
-        .carousel-perspective { perspective: 2500px; width: 100%; overflow: hidden; padding: 20px 0; }
+        /* CAROUSEL - COMPACT & LEFT ALIGNED */
+        .carousel-perspective { perspective: 2500px; width: 100%; overflow: hidden; padding: 15px 0; }
         .carousel-wrapper { 
             display: flex; 
             overflow-x: auto; 
-            padding: 0 10px; /* Aligns first card to left */
+            padding: 0 10px; 
             scroll-snap-type: x mandatory;
-            gap: 20px; 
-            align-items: flex-start; /* Keeps them top-aligned */
-            -webkit-overflow-scrolling: touch; 
+            gap: 15px; 
+            align-items: flex-start;
             scrollbar-width: none;
         }
         .carousel-wrapper::-webkit-scrollbar { display: none; }
         .carousel-item { 
-            flex: 0 0 92%; /* Allows peek of next card */
-            max-width: 1300px; 
-            scroll-snap-align: start; /* Snap to left edge */
+            flex: 0 0 88%; 
+            max-width: 1100px; 
+            scroll-snap-align: start; 
             position: relative; 
         }
 
-        /* MATCH CARDS */
-        .match-container { background: #DCDCDC; padding: 15px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #fff; }
-        .player-header { display: flex; justify-content: center; align-items: center; gap: 15px; font-weight: bold; font-size: 1.3rem; margin-bottom: 10px; }
-        .vs-label { font-size: 0.8rem; color: #666; font-style: italic; }
-        .match-result-banner { text-align: center; font-size: 1.4rem; margin: 5px 0 15px 0; padding: 12px; color: white; border-radius: 8px; font-weight: bold; }
+        /* MATCH CARDS - 25% REDUCTION */
+        .match-container { background: #DCDCDC; padding: 12px; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); border: 1px solid #fff; }
+        .player-header { display: flex; justify-content: center; align-items: center; gap: 10px; font-weight: bold; font-size: 1.1rem; margin-bottom: 8px; }
+        .vs-label { font-size: 0.7rem; color: #666; font-style: italic; }
+        .match-result-banner { text-align: center; font-size: 1.1rem; margin: 5px 0 12px 0; padding: 10px; color: white; border-radius: 6px; font-weight: bold; }
 
-        /* SCROLLABLE TABLES */
-        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; border-radius: 4px; }
-        table { border-collapse: collapse; min-width: 700px; width: 100%; background: white; table-layout: fixed; font-size: 0.95rem; }
-        th, td { border: 1px solid #bbb; padding: 10px 2px; text-align: center; }
+        /* SCROLLABLE TABLES - COMPACT SIZING */
+        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 12px; border-radius: 4px; }
+        table { border-collapse: collapse; min-width: 580px; width: 100%; background: white; table-layout: fixed; font-size: 0.8rem; }
+        th, td { border: 1px solid #bbb; padding: 6px 1px; text-align: center; }
         th { background: #444; color: white; }
         
-        .row-label { background: #f0f0f0; font-weight: bold; width: 140px; text-align: left; padding-left: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .status-cell { font-size: 0.85rem; font-weight: bold; background: #fafafa; }
+        .row-label { background: #f0f0f0; font-weight: bold; width: 110px; text-align: left; padding-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.75rem; }
+        .status-cell { font-size: 0.7rem; font-weight: bold; background: #fafafa; }
 
         .win-cell-p1 { background-color: var(--p1-color) !important; color: white !important; font-weight: bold; }
         .win-cell-p2 { background-color: var(--p2-color) !important; color: white !important; font-weight: bold; }
 
-        /* STANDINGS - EXTRA WIDE */
-        .section-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin: 20px 5px; overflow-x: auto; }
-        .standings-table { min-width: 950px; width: 100%; }
+        /* STANDINGS */
+        .section-box { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin: 20px 5px; overflow-x: auto; }
+        .standings-table { min-width: 850px; width: 100%; font-size: 0.85rem; }
         .standings-table td:first-child { 
-            width: 500px; 
+            width: 450px; 
             text-align: left; 
-            padding-left: 20px; 
+            padding-left: 15px; 
             font-weight: bold; 
-            font-size: 1.05rem; 
             white-space: nowrap; 
         }
 
         /* HISTORY - CENTERED */
         .history-list { text-align: center; }
         .history-item { 
-            padding: 12px; 
+            padding: 8px; 
             border-bottom: 1px solid #eee; 
-            font-size: 1.1rem; 
+            font-size: 0.9rem; 
             display: flex; 
             justify-content: center; 
             align-items: center;
         }
         .hist-side { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .hist-side.p1 { text-align: right; padding-right: 15px; color: var(--p1-color); font-weight: bold; }
-        .hist-side.p2 { text-align: left; padding-left: 15px; color: var(--p2-color); font-weight: bold; }
-        .hist-center { min-width: 120px; text-align: center; font-weight: bold; background: #f4f4f4; padding: 4px 10px; border-radius: 4px; font-size: 0.95rem; }
+        .hist-side.p1 { text-align: right; padding-right: 12px; color: var(--p1-color); font-weight: bold; }
+        .hist-side.p2 { text-align: left; padding-left: 12px; color: var(--p2-color); font-weight: bold; }
+        .hist-center { min-width: 100px; text-align: center; font-weight: bold; background: #f4f4f4; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; }
         
-        .week-label { background: #333; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 0.9rem; margin: 25px 0 10px 0; display: inline-block; }
+        .week-label { background: #333; color: #fff; padding: 5px 15px; border-radius: 15px; font-size: 0.75rem; margin: 20px 0 8px 0; display: inline-block; }
 
         @media (max-width: 600px) {
-            .carousel-item { flex: 0 0 95%; }
-            .player-header { font-size: 1.1rem; }
-            .standings-table td:first-child { width: 280px; }
-            .hist-side { font-size: 0.9rem; }
-            .hist-center { min-width: 90px; font-size: 0.8rem; }
+            .carousel-item { flex: 0 0 92%; }
+            .standings-table td:first-child { width: 250px; }
         }
     </style>
 </head>
@@ -131,7 +126,7 @@
             renderCarousel(data.matches || []);
             renderPoints(data.history || []);
             renderHistory(data.history || []);
-        } catch (e) { console.error("Data Error:", e); }
+        } catch (e) { console.error("Error:", e); }
     }
 
     function renderCarousel(matches) {
@@ -192,7 +187,7 @@
                                 <td style="background:#eee"><b>${sum(m.p2Scores.slice(start, start+9))}</b></td>
                             </tr>
                             <tr>
-                                <td class="row-label" style="font-size:0.75rem; color:#777;">Status</td>
+                                <td class="row-label" style="font-size:0.65rem; color:#777;">Status</td>
                                 ${m.p1Scores.slice(start, start+9).map((s, i) => {
                                     const p1S = parseInt(s), p2S = parseInt(m.p2Scores[start+i]);
                                     if(p1S && p2S) {
@@ -241,11 +236,9 @@
                 const text = r.text.toLowerCase();
                 const isAS = text.includes('a/s');
                 const centerText = isAS ? "A/S" : "v";
-                
                 const parts = r.text.split(' ');
                 const score = !isAS ? parts[parts.length - 1] : "";
                 const winnerName = parts[0];
-
                 let winClass = "";
                 if(!isAS) winClass = (winnerName === r.p1) ? "hist-p1" : "hist-p2";
 
