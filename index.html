@@ -28,7 +28,11 @@
         @media (min-width: 750px) { .carousel-item { flex: 0 0 700px; } }
 
         .match-container { background: #DCDCDC; padding: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .card-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 4px; font-weight: 900; font-size: 0.9rem; }
+        .card-header { display: flex; align-items: center; justify-content: center; gap: 20px; font-weight: 900; font-size: 0.9rem; margin-bottom: 2px; }
+        
+        /* COURSE NAME STYLE */
+        .venue-row { text-align: center; font-style: italic; font-size: 0.7rem; color: #555; margin-bottom: 5px; text-transform: uppercase; }
+
         .match-result-banner { text-align: center; font-size: 0.85rem; margin: 4px 0; padding: 6px; color: white; border-radius: 4px; font-weight: bold; }
         
         table { border-collapse: collapse; width: 100%; margin-bottom: 8px; background: white; font-size: 0.65rem; }
@@ -50,7 +54,7 @@
         /* CENTERED HISTORY ROWS */
         .hist-match-row { display: flex; align-items: center; justify-content: center; font-size: 0.75rem; padding: 6px 0; border-bottom: 1px dashed #eee; }
         .hist-player-left { flex: 1; text-align: right; font-weight: bold; padding-right: 12px; }
-        .hist-result-center { flex: 0 0 90px; text-align: center; font-weight: 900; font-size: 0.75rem; background: #f4f4f4; border-radius: 4px; padding: 3px 0; border: 1px solid #ddd; }
+        .hist-result-center { flex: 0 0 95px; text-align: center; font-weight: 900; font-size: 0.75rem; background: #f4f4f4; border-radius: 4px; padding: 3px 0; border: 1px solid #ddd; }
         .hist-player-right { flex: 1; text-align: left; font-weight: bold; padding-left: 12px; }
         
         .week-label { font-weight: bold; color: #1565c0; font-size: 0.8rem; margin-bottom: 6px; border-left: 3px solid #1565c0; padding-left: 8px; }
@@ -131,6 +135,7 @@ function renderMatches(matches) {
         }
         div.innerHTML = `<div class="match-container">
             <div class="card-header"><span class="p1-txt">${m.p1Name}</span><span style="font-size:0.6rem;font-weight:normal;color:#888">VS</span><span class="p2-txt">${m.p2Name}</span></div>
+            <div class="venue-row">${m.venue || 'TBA'}</div>
             <div class="match-result-banner" style="background:${bCol}">${bTxt}</div>
             ${renderSubTable(m, 0, 'OUT')}${renderSubTable(m, 9, 'IN', true)}
         </div>`;
