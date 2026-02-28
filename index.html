@@ -1,150 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golf League Hub</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>LST 74 Matchplay Live</title>
     <style>
         :root {
             --p1-color: #1976d2; 
             --p2-color: #d32f2f; 
+            --tie-color: #008000; 
             --neutral-bg: #555;   
+            --gold: #FFD700;
+            --header-bg: #d1d1d1;
         }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding-bottom: 50px; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding-bottom: 30px; }
         
-        /* FULL WIDTH LOGO - NO EMPTY SPACE */
-        .logo-container { 
-            width: 100%; 
-            line-height: 0; /* Removes tiny bottom gap in some browsers */
-            background: #fff;
-        }
-        .main-logo { 
-            width: 100%; 
-            height: auto; /* Natural height based on width */
-            display: block; 
-        }
+        .header-box { width: 100%; text-align: center; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); border-bottom: 4px solid var(--gold); margin-bottom: 15px; }
+        .header-box img { width: 100%; max-width: 800px; height: auto; display: block; margin: 0 auto; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 5px; }
-        h2 { text-align: center; color: #2e7d32; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem; }
-
-        /* CAROUSEL - COMPACT & SNAPPY */
-        .carousel-perspective { perspective: 2500px; width: 100%; overflow: hidden; padding: 5px 0; }
         .carousel-wrapper { 
-            display: flex; 
-            overflow-x: auto; 
-            padding: 0 5px; 
-            scroll-snap-type: x mandatory;
-            gap: 10px; 
-            align-items: flex-start;
-            scrollbar-width: none;
+            display: flex; overflow-x: auto; gap: 20px; padding: 10px 20px 30px 20px;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
         }
-        .carousel-wrapper::-webkit-scrollbar { display: none; }
-        .carousel-item { 
-            flex: 0 0 75%; /* Optimized width */
-            max-width: 800px; 
-            scroll-snap-align: start; 
-            position: relative; 
-        }
+        .carousel-item { flex: 0 0 100%; max-width: 650px; scroll-snap-align: center; }
+        @media (min-width: 768px) { .carousel-item { flex: 0 0 650px; } }
 
-        /* MATCH CARDS - COMPACT SIZING */
-        .match-container { background: #DCDCDC; padding: 8px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #fff; }
-        .player-header { display: flex; justify-content: flex-start; align-items: center; gap: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; padding-left: 5px; }
-        .vs-label { font-size: 0.6rem; color: #666; font-style: italic; }
-        .match-result-banner { text-align: left; font-size: 0.85rem; margin: 2px 0 8px 0; padding: 6px 10px; color: white; border-radius: 4px; font-weight: bold; width: fit-content; }
-
-        /* ULTRA COMPACT TABLES */
-        .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 8px; border-radius: 2px; }
-        table { border-collapse: collapse; min-width: 480px; width: 100%; background: white; table-layout: fixed; font-size: 0.7rem; }
-        th, td { border: 1px solid #bbb; padding: 4px 1px; text-align: center; }
-        th { background: #444; color: white; }
+        .match-container { background: #DCDCDC; padding: 15px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .card-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; font-weight: 900; font-size: 1.2rem; }
         
-        .row-label { background: #f0f0f0; font-weight: bold; width: 75px; text-align: left; padding-left: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.65rem; }
-        .status-cell { font-size: 0.6rem; font-weight: bold; background: #fafafa; }
-
-        .win-cell-p1 { background-color: var(--p1-color) !important; color: white !important; font-weight: bold; }
-        .win-cell-p2 { background-color: var(--p2-color) !important; color: white !important; font-weight: bold; }
-
-        /* STANDINGS & HISTORY - COMPACT REINSTATED */
-        .section-box { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin: 15px 5px; overflow-x: auto; }
-        .standings-table { min-width: 700px; width: 100%; font-size: 0.75rem; }
-        .standings-table td:first-child { 
-            width: 300px; 
-            text-align: left; 
-            padding-left: 10px; 
-            font-weight: bold; 
-            white-space: nowrap; 
-        }
-
-        .history-list { text-align: center; }
-        .history-item { 
-            padding: 5px; 
-            border-bottom: 1px solid #eee; 
-            font-size: 0.8rem; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-        }
-        .hist-side { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .hist-side.p1 { text-align: right; padding-right: 8px; color: var(--p1-color); font-weight: bold; }
-        .hist-side.p2 { text-align: left; padding-left: 8px; color: var(--p2-color); font-weight: bold; }
-        .hist-center { min-width: 80px; text-align: center; font-weight: bold; background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 0.7rem; }
+        .venue-label { width: 100%; text-align: center; font-style: italic; font-size: 0.9rem; margin-bottom: 10px; color: #444; }
+        .match-result-banner { text-align: center; font-size: 1.2rem; margin: 5px 0; padding: 10px; background: var(--neutral-bg); color: white; border-radius: 6px; font-weight: bold; }
         
-        .week-label { background: #333; color: #fff; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; margin: 12px 0 5px 0; display: inline-block; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 10px; background: white; table-layout: fixed; font-size: 0.75rem; }
+        th, td { border: 1px solid #bbb; padding: 6px 1px; text-align: center; color: #000; }
+        th { background: var(--header-bg); color: #000; font-weight: 800; border-bottom: 2px solid #999; }
+        
+        .row-label { background: #f8f8f8; font-weight: bold; width: 85px; text-align: left; padding-left: 5px; border-right: 2px solid #ccc; }
+        .col-sum { background: #e0e0e0; font-weight: bold; width: 35px; border-left: 2px solid #bbb; }
 
-        @media (max-width: 600px) {
-            .carousel-item { flex: 0 0 85%; }
-            .standings-table td:first-child { width: 180px; }
-            .row-label { width: 70px; }
-        }
+        .score-val { font-size: 1.1rem; font-weight: 900; padding: 4px 0; }
+        
+        .win-cell-p1 { background: var(--p1-color) !important; color: white !important; }
+        .win-cell-p2 { background: var(--p2-color) !important; color: white !important; }
+        .tie-cell { background: var(--tie-color) !important; color: white !important; }
+
+        .stat-p1 { background: var(--p1-color) !important; color: white; font-weight: bold; }
+        .stat-p2 { background: var(--p2-color) !important; color: white; font-weight: bold; }
+        .stat-as { background: #eee; color: #444; }
+
+        .section-box { max-width: 650px; margin: 20px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #1565c0; }
+        .pts-active { background: #fff9c4; border-left: 3px solid #fbc02d; font-weight: bold; }
+        
+        .error-msg { background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin: 20px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="logo-container">
-    <img src="logo.png" alt="League Logo" class="main-logo">
+<div class="header-box"><img src="logo.png" alt="LST 74 Matchplay"></div>
+
+<div id="error-display"></div>
+<div id="carousel" class="carousel-wrapper"></div>
+
+<div class="section-box">
+    <h2 style="text-align: center; margin: 0; color: #1565c0;">Season Standings</h2>
+    <table style="font-size: 0.9rem; margin-top: 15px;">
+        <thead>
+            <tr style="background: #f0f0f0;">
+                <th style="padding: 8px; text-align: left; background: transparent;">Player</th>
+                <th style="background: transparent;">W</th>
+                <th style="background: transparent;">D</th>
+                <th style="background: transparent;">L</th>
+                <th style="background: transparent;">Pts</th>
+            </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+    </table>
 </div>
 
-<div class="container">
-    <div class="carousel-perspective" id="match-section">
-        <div class="carousel-wrapper" id="carousel-view"></div>
-    </div>
-
-    <div class="section-box">
-        <h2>League Standings</h2>
-        <table class="standings-table">
-            <thead>
-                <tr style="background: #333; color: white;">
-                    <th>Player</th><th>Wins</th><th>All Square</th><th>Losses</th><th>Points</th>
-                </tr>
-            </thead>
-            <tbody id="points-body"></tbody>
-        </table>
-    </div>
-
-    <div class="section-box">
-        <h2>Match History</h2>
-        <div id="history-list" class="history-list"></div>
-    </div>
+<div class="section-box" style="border-top-color: #555;">
+    <h3>Match History</h3>
+    <div id="history-list"></div>
 </div>
 
 <script>
-    async function loadData() {
-        try {
-            // Anti-cache timestamp
-            const res = await fetch(`data.json?t=${new Date().getTime()}`);
-            const data = await res.json();
-            renderCarousel(data.matches || []);
-            renderPoints(data.history || []);
-            renderHistory(data.history || []);
-        } catch (e) { console.error("Data Load Error:", e); }
+// Logic to load data from JSON
+async function loadData() {
+    try {
+        const response = await fetch('data.json');
+        if (!response.ok) throw new Error('Could not find data.json');
+        
+        const data = await response.json();
+        
+        // --- THE FIX IS HERE ---
+        renderMatches(data.matches); 
+        // -----------------------
+        
+        renderStandings(data.history, data.playerPool);
+        renderHistory(data.history);
+    } catch (e) { 
+        console.error("Data Load Error:", e);
+        document.getElementById('error-display').innerHTML = `
+            <div class="error-msg">
+                ⚠️ Error Loading Data<br>
+                <small>${e.message}</small><br><br>
+                If testing locally, please upload to GitHub to view data.
+            </div>`;
     }
+}
 
-    // Logic for rendering Scorecards, Standings, and History matches previous successful versions
-    // [Script logic remains consistent with the requested compact formatting]
+function getSum(arr, start, end) {
+    return arr.slice(start, end).reduce((a, b) => a + (parseInt(b) || 0), 0);
+}
+
+function renderMatches(matches) {
+    const container = document.getElementById('carousel');
+    container.innerHTML = '';
+    if(!matches || matches.length === 0) { container.innerHTML = "<p style='text-align:center;width:100%'>No active matches.</p>"; return; }
+
+    matches.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'carousel-item';
+        
+        let p1Status = 0, lastHole = 0;
+        for(let i=0; i<18; i++) {
+            let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
+            if(!isNaN(s1) && !isNaN(s2)) { lastHole = i+1; if(s1 < s2) p1Status++; else if(s2 < s1) p1Status--; }
+        }
+        const abs = Math.abs(p1Status), rem = 18 - lastHole;
+        const winnerName = p1Status > 0 ? m.p1Name : m.p2Name;
+        
+        let bannerText = "Match Pending";
+        let bannerColor = "var(--neutral-bg)";
+        if(lastHole > 0) {
+            if(p1Status === 0) { bannerText = "All Square"; }
+            else {
+                bannerText = (abs > rem) ? (rem === 0 ? `${winnerName} wins 1 Up` : `${winnerName} wins ${abs} & ${rem}`) : `${winnerName} ${abs} Up`;
+                bannerColor = p1Status > 0 ? "var(--p1-color)" : "var(--p2-color)";
+            }
+        }
+
+        div.innerHTML = `
+            <div class="match-container">
+                <div class="card-header">
+                    <span style="color:var(--p1-color)">${m.p1Name}</span>
+                    <span style="font-size: 0.8rem; color: #666;">VS</span>
+                    <span style="color:var(--p2-color)">${m.p2Name}</span>
+                </div>
+                <div class="venue-label">${m.venue || 'TBA'}</div>
+                <div class="match-result-banner" style="background:${bannerColor}">${bannerText}</div>
+                ${renderSubTable(m, 0, 'OUT')}
+                ${renderSubTable(m, 9, 'IN', true)}
+            </div>`;
+        container.appendChild(div);
+    });
+}
+
+function renderSubTable(m, start, label, isSecond = false) {
+    const p1Out = getSum(m.p1Scores, 0, 9), p1In = getSum(m.p1Scores, 9, 18);
+    const p2Out = getSum(m.p2Scores, 0, 9), p2In = getSum(m.p2Scores, 9, 18);
+    const parOut = getSum(m.pars, 0, 9), parIn = getSum(m.pars, 9, 18);
+
+    let html = `<table><tr><th class="row-label">HOLE</th>`;
+    for(let i=1; i<=9; i++) html += `<th>${i+start}</th>`;
+    html += `<th class="col-sum">${label}</th>${isSecond ? '<th class="col-sum">TOT</th>' : ''}</tr>`;
     
-    // ... (rest of the script functions: renderCarousel, renderPoints, renderHistory) ...
-    // Note: Ensure the function bodies for rendering are included in your final file to maintain functionality.
-    loadData();
+    html += `<tr><td class="row-label">PAR</td>`;
+    for(let i=0; i<9; i++) html += `<td>${m.pars[i+start]}</td>`;
+    html += `<td class="col-sum">${isSecond ? parIn : parOut}</td>${isSecond ? `<td class="col-sum">${parOut+parIn}</td>` : ''}</tr>`;
+    
+    html += `<tr><td class="row-label" style="color:var(--p1-color)">${m.p1Name}</td>`;
+    for(let i=0; i<9; i++) {
+        let s1 = parseInt(m.p1Scores[i+start]), s2 = parseInt(m.p2Scores[i+start]);
+        let cls = "";
+        if(!isNaN(s1) && !isNaN(s2)) { cls = (s1 < s2) ? "win-cell-p1" : (s1 > s2 ? "" : "tie-cell"); }
+        html += `<td class="score-val ${cls}">${m.p1Scores[i+start] || ''}</td>`;
+    }
+    html += `<td class="col-sum">${isSecond ? p1In : p1Out}</td>${isSecond ? `<td class="col-sum">${p1Out+p1In}</td>` : ''}</tr>`;
+    
+    html += `<tr><td class="row-label" style="color:var(--p2-color)">${m.p2Name}</td>`;
+    for(let i=0; i<9; i++) {
+        let s1 = parseInt(m.p1Scores[i+start]), s2 = parseInt(m.p2Scores[i+start]);
+        let cls = "";
+        if(!isNaN(s1) && !isNaN(s2)) { cls = (s2 < s1) ? "win-cell-p2" : (s2 > s1 ? "" : "tie-cell"); }
+        html += `<td class="score-val ${cls}">${m.p2Scores[i+start] || ''}</td>`;
+    }
+    html += `<td class="col-sum">${isSecond ? p2In : p2Out}</td>${isSecond ? `<td class="col-sum">${p2Out+p2In}</td>` : ''}</tr>`;
+    
+    html += `<tr><td class="row-label">STATUS</td>`;
+    let running = 0;
+    for(let i=0; i<18; i++) {
+        let v1 = parseInt(m.p1Scores[i]), v2 = parseInt(m.p2Scores[i]);
+        if(!isNaN(v1) && !isNaN(v2)) { if(v1 < v2) running++; else if(v2 < v1) running--; }
+        if(i >= start && i < start+9) {
+            let hasScore = !isNaN(parseInt(m.p1Scores[i])) && !isNaN(parseInt(m.p2Scores[i]));
+            let txt = hasScore ? (running === 0 ? 'A/S' : Math.abs(running)+'up') : '';
+            let cls = hasScore ? (running === 0 ? 'stat-as' : (running > 0 ? 'stat-p1' : 'stat-p2')) : '';
+            html += `<td class="${cls}">${txt}</td>`;
+        }
+    }
+    html += `<td class="col-sum"></td>${isSecond ? '<td class="col-sum"></td>' : ''}</tr></table>`;
+    return html;
+}
+
+function renderStandings(history, playerPool) {
+    const stats = {};
+    playerPool.forEach(p => stats[p] = { w: 0, d: 0, l: 0, pts: 0 });
+    history.forEach(w => w.results.forEach(r => {
+        if (!stats[r.p1]) stats[r.p1] = { w: 0, d: 0, l: 0, pts: 0 };
+        if (!stats[r.p2]) stats[r.p2] = { w: 0, d: 0, l: 0, pts: 0 };
+        let diff = 0, last = 0;
+        for(let i=0; i<18; i++) {
+            let s1 = parseInt(r.scores.p1[i]), s2 = parseInt(r.scores.p2[i]);
+            if(!isNaN(s1) && !isNaN(s2)) { last = i+1; if(s1 < s2) diff++; else if(s2 < s1) diff--; }
+        }
+        if (last > 0 && (Math.abs(diff) > (18 - last) || last === 18)) {
+            if (diff > 0) { stats[r.p1].w++; stats[r.p1].pts += 2; stats[r.p2].l++; }
+            else if (diff < 0) { stats[r.p2].w++; stats[r.p2].pts += 2; stats[r.p1].l++; }
+            else { stats[r.p1].d++; stats[r.p1].pts += 1; stats[r.p2].d++; stats[r.p2].pts += 1; }
+        }
+    }));
+    const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
+    document.getElementById('standings-body').innerHTML = sorted.map(name => `
+        <tr><td style="text-align:left; font-weight:bold; padding:8px;">${name}</td><td>${stats[name].w}</td><td>${stats[name].d}</td><td>${stats[name].l}</td><td class="pts-active">${stats[name].pts}</td></tr>
+    `).join('');
+}
+
+function renderHistory(history) {
+    document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => `
+        <div style="margin-bottom:15px; border-bottom:1px solid #ddd; padding-bottom:10px;">
+            <div style="font-weight:bold; color:#1565c0; margin-bottom:5px;">${w.label}</div>
+            ${w.results.map(r => `<div style="text-align:center; padding:3px 0; font-size:0.9rem;">${r.html}</div>`).join('')}
+        </div>
+    `).join('');
+}
+
+loadData();
 </script>
 </body>
 </html>
