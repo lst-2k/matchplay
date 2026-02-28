@@ -12,52 +12,55 @@
             --gold: #FFD700;
             --header-bg: #d1d1d1;
         }
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding-bottom: 30px; color: #222; }
+        /* SCALED DOWN BASE FONT BY 25% */
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #eef2ee; padding-bottom: 20px; color: #222; font-size: 0.75rem; }
         
-        .header-box { width: 100%; text-align: center; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); border-bottom: 4px solid var(--gold); margin-bottom: 15px; }
-        .header-box img { width: 100%; max-width: 800px; height: auto; display: block; margin: 0 auto; }
+        .header-box { width: 100%; text-align: center; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); border-bottom: 3px solid var(--gold); margin-bottom: 10px; }
+        .header-box img { width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; }
 
         .carousel-wrapper { 
-            display: flex; overflow-x: auto; gap: 20px; padding: 10px 10px 30px 10px;
+            display: flex; overflow-x: auto; gap: 15px; padding: 5px 10px 20px 10px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
         }
-        /* WIDENED CONTAINER */
-        .carousel-item { flex: 0 0 100%; max-width: 800px; scroll-snap-align: center; }
-        @media (min-width: 850px) { .carousel-item { flex: 0 0 800px; } }
+        .carousel-item { flex: 0 0 100%; max-width: 700px; scroll-snap-align: center; }
+        @media (min-width: 750px) { .carousel-item { flex: 0 0 700px; } }
 
-        .match-container { background: #DCDCDC; padding: 12px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-        .card-header { display: flex; align-items: center; justify-content: center; gap: 30px; margin-bottom: 5px; font-weight: 900; font-size: 1.2rem; }
+        .match-container { background: #DCDCDC; padding: 10px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        .venue-label { width: 100%; text-align: center; font-style: italic; font-size: 0.85rem; margin-bottom: 10px; color: #444; }
-        .match-result-banner { text-align: center; font-size: 1.1rem; margin: 5px 0; padding: 10px; color: white; border-radius: 6px; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+        /* SCALED TEXT */
+        .card-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 4px; font-weight: 900; font-size: 0.9rem; }
+        .venue-label { width: 100%; text-align: center; font-style: italic; font-size: 0.7rem; margin-bottom: 8px; color: #444; }
+        .match-result-banner { text-align: center; font-size: 0.85rem; margin: 4px 0; padding: 6px; color: white; border-radius: 4px; font-weight: bold; }
         
-        /* WIDER HOLE COLUMNS: Removed table-layout: fixed */
-        table { border-collapse: collapse; width: 100%; margin-bottom: 10px; background: white; font-size: 0.75rem; }
-        th, td { border: 1px solid #bbb; padding: 8px 2px; text-align: center; min-width: 28px; }
-        th { background: var(--header-bg); color: #000; font-weight: 800; border-bottom: 2px solid #999; }
+        /* COMPACT TABLES */
+        table { border-collapse: collapse; width: 100%; margin-bottom: 8px; background: white; font-size: 0.65rem; }
+        th, td { border: 1px solid #bbb; padding: 4px 1px; text-align: center; min-width: 22px; }
+        th { background: var(--header-bg); color: #000; font-weight: 800; border-bottom: 1px solid #999; }
         
-        .row-label { background: #f8f8f8; font-weight: bold; width: 100px; text-align: left; padding-left: 8px; border-right: 2px solid #ccc; font-size: 0.8rem; }
-        .col-sum { background: #e0e0e0; font-weight: bold; width: 40px; border-left: 2px solid #bbb; font-size: 0.8rem; }
+        .row-label { background: #f8f8f8; font-weight: bold; width: 85px; text-align: left; padding-left: 6px; border-right: 2px solid #ccc; font-size: 0.7rem; }
+        .col-sum { background: #e0e0e0; font-weight: bold; width: 32px; border-left: 2px solid #bbb; font-size: 0.7rem; }
 
-        .score-val { font-size: 1.1rem; font-weight: 900; }
+        .score-val { font-size: 0.85rem; font-weight: 900; }
         
         .win-cell-p1 { background: var(--p1-color) !important; color: white !important; }
         .win-cell-p2 { background: var(--p2-color) !important; color: white !important; }
         .tie-cell { background: var(--tie-color) !important; color: white !important; }
 
-        .stat-p1 { background: var(--p1-color) !important; color: white; font-weight: bold; }
-        .stat-p2 { background: var(--p2-color) !important; color: white; font-weight: bold; }
-        .stat-as { background: #eee; color: #444; font-size: 0.7rem; }
+        .stat-p1 { background: var(--p1-color) !important; color: white; font-weight: bold; font-size: 0.6rem; }
+        .stat-p2 { background: var(--p2-color) !important; color: white; font-weight: bold; font-size: 0.6rem; }
+        .stat-as { background: #eee; color: #444; font-size: 0.6rem; }
 
-        /* STANDINGS & HISTORY */
-        .section-box { max-width: 800px; margin: 20px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #1565c0; }
-        .player-col { text-align: left !important; font-weight: bold; padding: 10px !important; width: 160px; font-size: 0.95rem; }
-        .pts-active { background: #fff9c4; border-left: 3px solid #fbc02d; font-weight: bold; }
+        /* STANDINGS & HISTORY SCALING */
+        .section-box { max-width: 700px; margin: 15px auto; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-top: 3px solid #1565c0; }
+        h2, h3 { margin-top: 0; font-size: 1rem; }
         
-        /* History Coloring Classes */
+        .player-col { text-align: left !important; font-weight: bold; padding: 6px !important; width: 130px; font-size: 0.8rem; }
+        .pts-active { background: #fff9c4; border-left: 2px solid #fbc02d; font-weight: bold; }
+        
+        /* History Color Classes */
         .hist-p1 { color: var(--p1-color); font-weight: bold; }
         .hist-p2 { color: var(--p2-color); font-weight: bold; }
-        .hist-match { font-size: 0.9rem; padding: 5px 0; border-bottom: 1px dashed #eee; }
+        .hist-match { font-size: 0.75rem; padding: 4px 0; border-bottom: 1px dashed #eee; text-align: center; }
     </style>
 </head>
 <body>
@@ -66,15 +69,15 @@
 <div id="carousel" class="carousel-wrapper"></div>
 
 <div class="section-box">
-    <h2 style="text-align: center; margin-bottom: 15px; color: #1565c0;">Season Standings</h2>
+    <h2 style="text-align: center; color: #1565c0;">Season Standings</h2>
     <table>
         <thead>
             <tr style="background: #f0f0f0;">
                 <th class="player-col">Player</th>
-                <th style="width: 50px;">W</th>
-                <th style="width: 50px;">D</th>
-                <th style="width: 50px;">L</th>
-                <th style="width: 60px;">Pts</th>
+                <th style="width: 35px;">W</th>
+                <th style="width: 35px;">D</th>
+                <th style="width: 35px;">L</th>
+                <th style="width: 45px;">Pts</th>
             </tr>
         </thead>
         <tbody id="standings-body"></tbody>
@@ -87,14 +90,11 @@
 </div>
 
 <script>
-let globalPlayers = [];
-
 async function loadData() {
     try {
         const response = await fetch('data.json');
         if (!response.ok) throw new Error('Data not found');
         const data = await response.json();
-        globalPlayers = data.playerPool || [];
         renderMatches(data.matches); 
         renderStandings(data.history, data.playerPool);
         renderHistory(data.history);
@@ -135,7 +135,7 @@ function renderMatches(matches) {
             <div class="match-container">
                 <div class="card-header">
                     <span style="color:var(--p1-color)">${m.p1Name}</span>
-                    <span style="font-size: 0.8rem; color: #888; font-weight:normal;">VS</span>
+                    <span style="font-size: 0.6rem; color: #888; font-weight:normal;">VS</span>
                     <span style="color:var(--p2-color)">${m.p2Name}</span>
                 </div>
                 <div class="venue-label">${m.venue || 'TBA'}</div>
@@ -185,7 +185,7 @@ function renderSubTable(m, start, label, isSecond = false) {
             let has = !isNaN(parseInt(m.p1Scores[i])) && !isNaN(parseInt(m.p2Scores[i]));
             let txt = has ? (running === 0 ? 'A/S' : Math.abs(running)+'up') : '';
             let cls = has ? (running === 0 ? 'stat-as' : (running > 0 ? 'stat-p1' : 'stat-p2')) : '';
-            html += `<td class="${cls}" style="font-size:0.65rem">${txt}</td>`;
+            html += `<td class="${cls}">${txt}</td>`;
         }
     }
     html += `<td class="col-sum"></td>${isSecond ? '<td class="col-sum"></td>' : ''}</tr></table>`;
@@ -218,17 +218,19 @@ function renderHistory(history) {
     const list = document.getElementById('history-list');
     list.innerHTML = history.slice().reverse().map(w => {
         let matchesHtml = w.results.map(r => {
-            // Color coding logic for History
             let text = r.html;
-            // Highlight P1 and P2 names with their colors
-            text = text.replace(r.p1, `<span class="hist-p1">${r.p1}</span>`);
-            text = text.replace(r.p2, `<span class="hist-p2">${r.p2}</span>`);
+            // Clean up name replacement to ensure it doesn't break the HTML tags
+            let p1Span = `<span class="hist-p1">${r.p1}</span>`;
+            let p2Span = `<span class="hist-p2">${r.p2}</span>`;
+            // Temporary markers to avoid double-replacing
+            text = text.split(r.p1).join("{{P1}}").split(r.p2).join("{{P2}}");
+            text = text.replace("{{P1}}", p1Span).replace("{{P2}}", p2Span);
             return `<div class="hist-match">${text}</div>`;
         }).join('');
         
         return `
-        <div style="margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:10px;">
-            <div style="font-weight:bold; color:#1565c0; border-left:4px solid #1565c0; padding-left:10px; margin-bottom:8px;">${w.label}</div>
+        <div style="margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:8px;">
+            <div style="font-weight:bold; color:#1565c0; font-size: 0.8rem; margin-bottom:4px;">${w.label}</div>
             ${matchesHtml}
         </div>`;
     }).join('');
