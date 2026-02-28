@@ -22,23 +22,27 @@
             display: flex; overflow-x: auto; gap: 20px; padding: 10px 20px 30px 20px;
             scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
         }
-        .carousel-item { flex: 0 0 100%; max-width: 650px; scroll-snap-align: center; }
-        @media (min-width: 768px) { .carousel-item { flex: 0 0 650px; } }
+        /* WIDENED & SCALED DOWN: Increased max-width to 750px (was 650) */
+        .carousel-item { flex: 0 0 100%; max-width: 750px; scroll-snap-align: center; }
+        @media (min-width: 768px) { .carousel-item { flex: 0 0 750px; } }
 
         .match-container { background: #DCDCDC; padding: 15px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-        .card-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; font-weight: 900; font-size: 1.2rem; }
         
-        .venue-label { width: 100%; text-align: center; font-style: italic; font-size: 0.9rem; margin-bottom: 10px; color: #444; }
-        .match-result-banner { text-align: center; font-size: 1.2rem; margin: 5px 0; padding: 10px; background: var(--neutral-bg); color: white; border-radius: 6px; font-weight: bold; }
+        /* WIDENED STATUS TEXT: Added more spacing and font-weight */
+        .card-header { display: flex; align-items: center; justify-content: center; gap: 25px; margin-bottom: 5px; font-weight: 900; font-size: 1.1rem; }
         
-        table { border-collapse: collapse; width: 100%; margin-bottom: 10px; background: white; table-layout: fixed; font-size: 0.75rem; }
+        .venue-label { width: 100%; text-align: center; font-style: italic; font-size: 0.85rem; margin-bottom: 10px; color: #444; }
+        .match-result-banner { text-align: center; font-size: 1.1rem; margin: 5px 0; padding: 10px; background: var(--neutral-bg); color: white; border-radius: 6px; font-weight: bold; }
+        
+        /* SCALED TABLES: Reduced font size to 0.7rem for better fit */
+        table { border-collapse: collapse; width: 100%; margin-bottom: 10px; background: white; table-layout: fixed; font-size: 0.7rem; }
         th, td { border: 1px solid #bbb; padding: 6px 1px; text-align: center; color: #000; }
         th { background: var(--header-bg); color: #000; font-weight: 800; border-bottom: 2px solid #999; }
         
-        .row-label { background: #f8f8f8; font-weight: bold; width: 85px; text-align: left; padding-left: 5px; border-right: 2px solid #ccc; }
+        .row-label { background: #f8f8f8; font-weight: bold; width: 95px; text-align: left; padding-left: 8px; border-right: 2px solid #ccc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .col-sum { background: #e0e0e0; font-weight: bold; width: 35px; border-left: 2px solid #bbb; }
 
-        .score-val { font-size: 1.1rem; font-weight: 900; padding: 4px 0; }
+        .score-val { font-size: 1rem; font-weight: 900; padding: 4px 0; }
         
         .win-cell-p1 { background: var(--p1-color) !important; color: white !important; }
         .win-cell-p2 { background: var(--p2-color) !important; color: white !important; }
@@ -48,29 +52,28 @@
         .stat-p2 { background: var(--p2-color) !important; color: white; font-weight: bold; }
         .stat-as { background: #eee; color: #444; }
 
-        .section-box { max-width: 650px; margin: 20px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #1565c0; }
+        /* STANDINGS FIX: Added specific width to Player column */
+        .section-box { max-width: 750px; margin: 20px auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 4px solid #1565c0; }
         .pts-active { background: #fff9c4; border-left: 3px solid #fbc02d; font-weight: bold; }
         
-        .error-msg { background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin: 20px; text-align: center; font-weight: bold; }
+        .player-col { text-align: left !important; font-weight: bold; padding: 8px !important; width: 140px; }
     </style>
 </head>
 <body>
 
 <div class="header-box"><img src="logo.png" alt="LST 74 Matchplay"></div>
-
-<div id="error-display"></div>
 <div id="carousel" class="carousel-wrapper"></div>
 
 <div class="section-box">
     <h2 style="text-align: center; margin: 0; color: #1565c0;">Season Standings</h2>
-    <table style="font-size: 0.9rem; margin-top: 15px;">
+    <table style="font-size: 0.85rem; margin-top: 15px;">
         <thead>
             <tr style="background: #f0f0f0;">
-                <th style="padding: 8px; text-align: left; background: transparent;">Player</th>
-                <th style="background: transparent;">W</th>
-                <th style="background: transparent;">D</th>
-                <th style="background: transparent;">L</th>
-                <th style="background: transparent;">Pts</th>
+                <th class="player-col" style="background: transparent;">Player</th>
+                <th style="background: transparent; width: 40px;">W</th>
+                <th style="background: transparent; width: 40px;">D</th>
+                <th style="background: transparent; width: 40px;">L</th>
+                <th style="background: transparent; width: 50px;">Pts</th>
             </tr>
         </thead>
         <tbody id="standings-body"></tbody>
@@ -83,28 +86,16 @@
 </div>
 
 <script>
-// Logic to load data from JSON
 async function loadData() {
     try {
         const response = await fetch('data.json');
         if (!response.ok) throw new Error('Could not find data.json');
-        
         const data = await response.json();
-        
-        // --- THE FIX IS HERE ---
         renderMatches(data.matches); 
-        // -----------------------
-        
         renderStandings(data.history, data.playerPool);
         renderHistory(data.history);
     } catch (e) { 
         console.error("Data Load Error:", e);
-        document.getElementById('error-display').innerHTML = `
-            <div class="error-msg">
-                ⚠️ Error Loading Data<br>
-                <small>${e.message}</small><br><br>
-                If testing locally, please upload to GitHub to view data.
-            </div>`;
     }
 }
 
@@ -143,7 +134,7 @@ function renderMatches(matches) {
             <div class="match-container">
                 <div class="card-header">
                     <span style="color:var(--p1-color)">${m.p1Name}</span>
-                    <span style="font-size: 0.8rem; color: #666;">VS</span>
+                    <span style="font-size: 0.7rem; color: #888;">VS</span>
                     <span style="color:var(--p2-color)">${m.p2Name}</span>
                 </div>
                 <div class="venue-label">${m.venue || 'TBA'}</div>
@@ -221,7 +212,7 @@ function renderStandings(history, playerPool) {
     }));
     const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
     document.getElementById('standings-body').innerHTML = sorted.map(name => `
-        <tr><td style="text-align:left; font-weight:bold; padding:8px;">${name}</td><td>${stats[name].w}</td><td>${stats[name].d}</td><td>${stats[name].l}</td><td class="pts-active">${stats[name].pts}</td></tr>
+        <tr><td class="player-col">${name}</td><td>${stats[name].w}</td><td>${stats[name].d}</td><td>${stats[name].l}</td><td class="pts-active">${stats[name].pts}</td></tr>
     `).join('');
 }
 
@@ -229,7 +220,7 @@ function renderHistory(history) {
     document.getElementById('history-list').innerHTML = history.slice().reverse().map(w => `
         <div style="margin-bottom:15px; border-bottom:1px solid #ddd; padding-bottom:10px;">
             <div style="font-weight:bold; color:#1565c0; margin-bottom:5px;">${w.label}</div>
-            ${w.results.map(r => `<div style="text-align:center; padding:3px 0; font-size:0.9rem;">${r.html}</div>`).join('')}
+            ${w.results.map(r => `<div style="text-align:center; padding:3px 0; font-size:0.85rem;">${r.html}</div>`).join('')}
         </div>
     `).join('');
 }
