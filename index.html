@@ -190,21 +190,38 @@ function renderSubTable(m, start, label, isSecond = false) {
     }
     h += `<td class="col-sum">${isSecond ? p2In : p2Out}</td>${isSecond ? `<td>${p2Out+p2In}</td>` : ''}</tr>`;
 
-    // ADDED STATUS ROW
+    // STATUS ROW WITH FINISH CHECK
     h += `<tr class="status-row"><td class="row-label" style="font-size:0.55rem">STATUS</td>`;
     let runningDiff = 0;
+    let matchOverAtHole = 99; // Track if the match ended early
+
     for(let i=0; i < (start + 9); i++) {
         let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
-        if(!isNaN(s1) && !isNaN(s2)) {
+        let bothPlayed = !isNaN(s1) && !isNaN(s2);
+        
+        if(bothPlayed) {
             if(s1 < s2) runningDiff++;
             else if(s2 < s1) runningDiff--;
+            
+            // Check if match mathematically ended (e.g. 4&3)
+            let remaining = 17 - i;
+            if (Math.abs(runningDiff) > remaining && matchOverAtHole === 99) {
+                matchOverAtHole = i;
+            }
         }
+
         if (i >= start) {
             let statusTxt = "-";
             let statusCls = "";
-            if (runningDiff > 0) { statusTxt = runningDiff + " UP"; statusCls = "status-p1"; }
-            else if (runningDiff < 0) { statusTxt = Math.abs(runningDiff) + " UP"; statusCls = "status-p2"; }
-            else if (!isNaN(parseInt(m.p1Scores[i])) && !isNaN(parseInt(m.p2Scores[i]))) { statusTxt = "A/S"; }
+            
+            // Only show status if scores exist AND match hasn't finished in a prior hole
+            if (bothPlayed && i <= matchOverAtHole) {
+                if (runningDiff > 0) { statusTxt = runningDiff + " UP"; statusCls = "status-p1"; }
+                else if (runningDiff < 0) { statusTxt = Math.abs(runningDiff) + " UP"; statusCls = "status-p2"; }
+                else { statusTxt = "A/S"; }
+            } else {
+                statusTxt = ""; // Leave blank if no score or match already finished
+            }
             h += `<td class="${statusCls}">${statusTxt}</td>`;
         }
     }
