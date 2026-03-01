@@ -45,11 +45,15 @@
         .win-cell-p2 { background: var(--p2-color) !important; color: white !important; }
         .tie-cell { background: var(--tie-color) !important; color: white !important; }
 
+        /* Status Row Styles */
+        .status-row { font-size: 0.55rem; color: #666; font-weight: bold; background: #fdfdfd; }
+        .status-p1 { color: var(--p1-color); }
+        .status-p2 { color: var(--p2-color); }
+
         .section-box { max-width: 700px; margin: 15px auto; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .history-box { border-top: 3px solid #555; }
         .standings-box { border-top: 3px solid #1565c0; }
         
-        /* DROPDOWN STYLING */
         details { margin-bottom: 8px; border-bottom: 1px solid #eee; }
         summary { 
             display: flex; 
@@ -161,12 +165,15 @@ function renderSubTable(m, start, label, isSecond = false) {
     const p1Out = getSum(m.p1Scores, 0, 9), p1In = getSum(m.p1Scores, 9, 18);
     const p2Out = getSum(m.p2Scores, 0, 9), p2In = getSum(m.p2Scores, 9, 18);
     const parOut = getSum(m.pars, 0, 9), parIn = getSum(m.pars, 9, 18);
+    
     let h = `<table><tr><th class="row-label">HOLE</th>`;
     for(let i=1; i<=9; i++) h += `<th>${i+start}</th>`;
     h += `<th class="col-sum">${label}</th>${isSecond ? '<th>TOT</th>' : ''}</tr>`;
+    
     h += `<tr><td class="row-label">PAR</td>`;
     for(let i=0; i<9; i++) h += `<td>${m.pars[i+start]}</td>`;
     h += `<td class="col-sum">${isSecond ? parIn : parOut}</td>${isSecond ? `<td>${parOut+parIn}</td>` : ''}</tr>`;
+
     h += `<tr><td class="row-label p1-txt">${m.p1Name}</td>`;
     for(let i=0; i<9; i++) {
         let s1 = parseInt(m.p1Scores[i+start]), s2 = parseInt(m.p2Scores[i+start]);
@@ -174,13 +181,35 @@ function renderSubTable(m, start, label, isSecond = false) {
         h += `<td class="score-val ${c}">${m.p1Scores[i+start] || ''}</td>`;
     }
     h += `<td class="col-sum">${isSecond ? p1In : p1Out}</td>${isSecond ? `<td>${p1Out+p1In}</td>` : ''}</tr>`;
+
     h += `<tr><td class="row-label p2-txt">${m.p2Name}</td>`;
     for(let i=0; i<9; i++) {
         let s1 = parseInt(m.p1Scores[i+start]), s2 = parseInt(m.p2Scores[i+start]);
         let c = (!isNaN(s1) && !isNaN(s2)) ? (s2 < s1 ? "win-cell-p2" : (s2 > s1 ? "" : "tie-cell")) : "";
         h += `<td class="score-val ${c}">${m.p2Scores[i+start] || ''}</td>`;
     }
-    h += `<td class="col-sum">${isSecond ? p2In : p2Out}</td>${isSecond ? `<td>${p2Out+p2In}</td>` : ''}</tr></table>`;
+    h += `<td class="col-sum">${isSecond ? p2In : p2Out}</td>${isSecond ? `<td>${p2Out+p2In}</td>` : ''}</tr>`;
+
+    // ADDED STATUS ROW
+    h += `<tr class="status-row"><td class="row-label" style="font-size:0.55rem">STATUS</td>`;
+    let runningDiff = 0;
+    for(let i=0; i < (start + 9); i++) {
+        let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
+        if(!isNaN(s1) && !isNaN(s2)) {
+            if(s1 < s2) runningDiff++;
+            else if(s2 < s1) runningDiff--;
+        }
+        if (i >= start) {
+            let statusTxt = "-";
+            let statusCls = "";
+            if (runningDiff > 0) { statusTxt = runningDiff + " UP"; statusCls = "status-p1"; }
+            else if (runningDiff < 0) { statusTxt = Math.abs(runningDiff) + " UP"; statusCls = "status-p2"; }
+            else if (!isNaN(parseInt(m.p1Scores[i])) && !isNaN(parseInt(m.p2Scores[i]))) { statusTxt = "A/S"; }
+            h += `<td class="${statusCls}">${statusTxt}</td>`;
+        }
+    }
+    h += `<td class="col-sum"></td>${isSecond ? '<td></td>' : ''}</tr></table>`;
+    
     return h;
 }
 
@@ -207,7 +236,6 @@ function renderStandings(history, playerPool) {
 
 function renderHistory(history) {
     const list = document.getElementById('history-list');
-    // .slice().reverse() puts the newest JSON entries at the top
     list.innerHTML = history.slice().reverse().map((w, index) => {
         let matchesHtml = w.results.map(r => {
             let resTxt = "v", resCls = "";
@@ -234,10 +262,7 @@ function renderHistory(history) {
                 <div class="hist-player-right p2-txt">${r.p2}</div>
             </div>`;
         }).join('');
-
-        // The 'open' attribute ensures the top-most week (the latest) starts expanded
         const isOpen = index === 0 ? 'open' : '';
-
         return `
         <details ${isOpen}>
             <summary><div class="week-label">${w.label}</div></summary>
