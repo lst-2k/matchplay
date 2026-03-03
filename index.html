@@ -45,7 +45,6 @@
         .win-cell-p2 { background: var(--p2-color) !important; color: white !important; }
         .tie-cell { background: var(--tie-color) !important; color: white !important; }
 
-        /* Status Row Styles */
         .status-row { font-size: 0.55rem; color: #666; font-weight: bold; background: #fdfdfd; }
         .status-p1 { color: var(--p1-color); }
         .status-p2 { color: var(--p2-color); }
@@ -104,7 +103,12 @@
         <thead>
             <tr style="background: #f0f0f0;">
                 <th class="player-col">Player</th>
-                <th style="width: 35px;">W</th><th style="width: 35px;">D</th><th style="width: 35px;">L</th><th style="width: 45px;">Pts</th>
+                <th style="width: 30px;">P</th>
+                <th style="width: 30px;">W</th>
+                <th style="width: 30px;">D</th>
+                <th style="width: 30px;">L</th>
+                <th style="width: 45px;">Pts</th>
+                <th style="width: 30px;">+/-</th>
             </tr>
         </thead>
         <tbody id="standings-body"></tbody>
@@ -190,10 +194,9 @@ function renderSubTable(m, start, label, isSecond = false) {
     }
     h += `<td class="col-sum">${isSecond ? p2In : p2Out}</td>${isSecond ? `<td>${p2Out+p2In}</td>` : ''}</tr>`;
 
-    // STATUS ROW WITH FINISH CHECK
     h += `<tr class="status-row"><td class="row-label" style="font-size:0.55rem">STATUS</td>`;
     let runningDiff = 0;
-    let matchOverAtHole = 99; // Track if the match ended early
+    let matchOverAtHole = 99; 
 
     for(let i=0; i < (start + 9); i++) {
         let s1 = parseInt(m.p1Scores[i]), s2 = parseInt(m.p2Scores[i]);
@@ -202,53 +205,79 @@ function renderSubTable(m, start, label, isSecond = false) {
         if(bothPlayed) {
             if(s1 < s2) runningDiff++;
             else if(s2 < s1) runningDiff--;
-            
-            // Check if match mathematically ended (e.g. 4&3)
             let remaining = 17 - i;
             if (Math.abs(runningDiff) > remaining && matchOverAtHole === 99) {
                 matchOverAtHole = i;
             }
         }
-
         if (i >= start) {
             let statusTxt = "-";
             let statusCls = "";
-            
-            // Only show status if scores exist AND match hasn't finished in a prior hole
             if (bothPlayed && i <= matchOverAtHole) {
                 if (runningDiff > 0) { statusTxt = runningDiff + " UP"; statusCls = "status-p1"; }
                 else if (runningDiff < 0) { statusTxt = Math.abs(runningDiff) + " UP"; statusCls = "status-p2"; }
                 else { statusTxt = "A/S"; }
             } else {
-                statusTxt = ""; // Leave blank if no score or match already finished
+                statusTxt = ""; 
             }
             h += `<td class="${statusCls}">${statusTxt}</td>`;
         }
     }
     h += `<td class="col-sum"></td>${isSecond ? '<td></td>' : ''}</tr></table>`;
-    
     return h;
 }
 
 function renderStandings(history, playerPool) {
-    const s = {}; playerPool.forEach(p => s[p] = { w: 0, d: 0, l: 0, pts: 0 });
-    history.forEach(w => w.results.forEach(r => {
-        if (!s[r.p1] || !s[r.p2]) return;
-        let d = 0, last = 0;
-        for(let i=0; i<18; i++) {
-            let v1 = parseInt(r.scores.p1[i]), v2 = parseInt(r.scores.p2[i]);
-            if(!isNaN(v1) && !isNaN(v2)) { last = i+1; if(v1 < v2) d++; else if(v2 < v1) d--; }
-        }
-        if (last > 0 && (Math.abs(d) > (18 - last) || last === 18)) {
-            if (d > 0) { s[r.p1].w++; s[r.p1].pts += 2; s[r.p2].l++; }
-            else if (d < 0) { s[r.p2].w++; s[r.p2].pts += 2; s[r.p1].l++; }
-            else { s[r.p1].d++; s[r.p1].pts += 1; s[r.p2].d++; s[r.p2].pts += 1; }
-        }
-    }));
-    const sorted = Object.keys(s).sort((a,b) => s[b].pts - s[a].pts);
-    document.getElementById('standings-body').innerHTML = sorted.map(n => `
-        <tr><td class="player-col">${n}</td><td>${s[n].w}</td><td>${s[n].d}</td><td>${s[n].l}</td><td class="pts-active">${s[n].pts}</td></tr>
-    `).join('');
+    const calculate = (hist) => {
+        const stats = {};
+        playerPool.forEach(p => stats[p] = { p: 0, w: 0, d: 0, l: 0, pts: 0 });
+        
+        hist.forEach(w => w.results.forEach(r => {
+            if (!stats[r.p1] || !stats[r.p2]) return;
+            let d = 0, last = 0;
+            for(let i=0; i<18; i++) {
+                let v1 = parseInt(r.scores.p1[i]), v2 = parseInt(r.scores.p2[i]);
+                if(!isNaN(v1) && !isNaN(v2)) { 
+                    last = i+1; 
+                    if(v1 < v2) d++; else if(v2 < v1) d--; 
+                }
+            }
+            if (last > 0) {
+                stats[r.p1].p++;
+                stats[r.p2].p++;
+                if (d > 0) { stats[r.p1].w++; stats[r.p1].pts += 2; stats[r.p2].l++; }
+                else if (d < 0) { stats[r.p2].w++; stats[r.p2].pts += 2; stats[r.p1].l++; }
+                else { stats[r.p1].d++; stats[r.p1].pts += 1; stats[r.p2].d++; stats[r.p2].pts += 1; }
+            }
+        }));
+        return stats;
+    };
+
+    const currentStats = calculate(history);
+    const currentSorted = Object.keys(currentStats).sort((a,b) => currentStats[b].pts - currentStats[a].pts);
+
+    const prevStats = calculate(history.slice(0, -1));
+    const prevSorted = Object.keys(prevStats).sort((a,b) => prevStats[b].pts - prevStats[a].pts);
+
+    document.getElementById('standings-body').innerHTML = currentSorted.map((name, index) => {
+        const s = currentStats[name];
+        const prevIndex = prevSorted.indexOf(name);
+        let trend = '<span style="color:#ccc">●</span>'; 
+        if (prevIndex > index) trend = '<span style="color:green">▲</span>';
+        else if (prevIndex < index) trend = '<span style="color:red">▼</span>';
+
+        return `
+            <tr>
+                <td class="player-col">${name}</td>
+                <td>${s.p}</td>
+                <td>${s.w}</td>
+                <td>${s.d}</td>
+                <td>${s.l}</td>
+                <td class="pts-active">${s.pts}</td>
+                <td>${trend}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function renderHistory(history) {
