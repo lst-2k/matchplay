@@ -1154,7 +1154,7 @@
     },
     {
       "week": 5,
-      "label": "Week 5 @ Poertlands Eastmoreland",
+      "label": "Week 5 @ Portlands Eastmoreland",
       "results": [
         {
           "html": "x3offthetee v <span class=\"win-p2\">Kalessin Wins 3&1</span>",
@@ -2738,7 +2738,7 @@
           }
         },
         {
-          "html": "<span>Mr Longpole</span> <b>A/S</b> <span>Hoplinkz</span>",
+          "html": "<span class=\"win-p1\">Wins 1 up Mr Longpole</span> v Hoplinkz",
           "p1": "Mr Longpole",
           "p2": "Hoplinkz",
           "scores": {
@@ -2763,24 +2763,24 @@
               "5"
             ],
             "p2": [
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              ""
+              "4",
+              "5",
+              "3",
+              "5",
+              "4",
+              "3",
+              "4",
+              "2",
+              "4",
+              "4",
+              "3",
+              "3",
+              "4",
+              "4",
+              "4",
+              "4",
+              "5",
+              "5"
             ]
           }
         },
@@ -3126,24 +3126,24 @@
         "5"
       ],
       "p2Scores": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "4",
+        "5",
+        "3",
+        "5",
+        "4",
+        "3",
+        "4",
+        "2",
+        "4",
+        "4",
+        "3",
+        "3",
+        "4",
+        "4",
+        "4",
+        "4",
+        "5",
+        "5"
       ]
     },
     {
