@@ -1154,7 +1154,7 @@
     },
     {
       "week": 5,
-      "label": "Week 5 @ Poertlands Eastmoreland",
+      "label": "Week 5 @ Portland's Eastmoreland",
       "results": [
         {
           "html": "x3offthetee v <span class=\"win-p2\">Kalessin Wins 3&1</span>",
@@ -2597,7 +2597,7 @@
       "label": "Week 10 @ Quarry Golf Club SATX",
       "results": [
         {
-          "html": "<span>Geordieboy85</span> <b>A/S</b> <span>z.dub.z</span>",
+          "html": "<span class=\"win-p1\">Wins 10&8 Geordieboy85</span> v z.dub.z",
           "p1": "Geordieboy85",
           "p2": "z.dub.z",
           "scores": {
@@ -2622,16 +2622,16 @@
               "5"
             ],
             "p2": [
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
+              "6",
+              "6",
+              "6",
+              "6",
+              "6",
+              "6",
+              "6",
+              "6",
+              "6",
+              "6",
               "",
               "",
               "",
@@ -2928,16 +2928,16 @@
         "5"
       ],
       "p2Scores": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
+        "6",
         "",
         "",
         "",
