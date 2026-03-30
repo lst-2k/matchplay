@@ -2400,7 +2400,8 @@
               "",
               ""
             ]
-          }
+          },
+	"walkover": "p1"
         },
         {
           "html": "Mr Longpole v <span class=\"win-p2\">Tenbobnote Wins 1 up</span>",
