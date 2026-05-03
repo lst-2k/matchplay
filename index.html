@@ -223,109 +223,74 @@ function renderSubTable(m, start, label, isSecond = false) {
 
 function renderStandings(history, playerPool) {
     const stats = {};
-    // Initialize stats for every player in the pool
     playerPool.forEach(p => stats[p] = { p: 0, w: 0, d: 0, l: 0, pts: 0 });
     
     history.forEach(w => {
-        // --- POST-SEASON FILTER ---
-        // Convert label to lowercase to check for "semi" or "final"
         const label = (w.label || "").toLowerCase();
         
-        // If the week is part of the playoffs, skip the point calculations
-        if (label.includes("final") || label.includes("semi")) {
+        // Ignore results for Semi-Finals, Finals, and Play Offs
+        if (label.includes("final") || label.includes("semi") || label.includes("play off")) {
             return; 
         }
 
         w.results.forEach(r => {
             if (!stats[r.p1] || !stats[r.p2]) return;
+            stats[r.p1].p++; stats[r.p2].p++;
             
-            // Increment games played for regular season matches[cite: 1]
-            stats[r.p1].p++; 
-            stats[r.p2].p++;
-            
-            // Handle Walkovers[cite: 1]
-            if (r.walkover === 'p1') { 
-                stats[r.p1].w++; 
-                stats[r.p1].pts += 2; 
-                stats[r.p2].l++; 
-            }
-            else if (r.walkover === 'p2') { 
-                stats[r.p2].w++; 
-                stats[r.p2].pts += 2; 
-                stats[r.p1].l++; 
-            }
+            if (r.walkover === 'p1') { stats[r.p1].w++; stats[r.p1].pts += 2; stats[r.p2].l++; }
+            else if (r.walkover === 'p2') { stats[r.p2].w++; stats[r.p2].pts += 2; stats[r.p1].l++; }
             else {
-                // Calculate match result based on scores[cite: 1]
                 let d = 0, played = false;
                 for(let i=0; i<18; i++) {
                     let v1 = parseInt(r.scores.p1[i]), v2 = parseInt(r.scores.p2[i]);
-                    if(!isNaN(v1) && !isNaN(v2)) { 
-                        played = true; 
-                        if(v1 < v2) d++; 
-                        else if(v2 < v1) d--; 
-                    }
+                    if(!isNaN(v1) && !isNaN(v2)) { played = true; if(v1 < v2) d++; else if(v2 < v1) d--; }
                 }
-                
                 if (played) {
-                    if (d > 0) { 
-                        // Player 1 Win[cite: 1]
-                        stats[r.p1].w++; 
-                        stats[r.p1].pts += 2; 
-                        stats[r.p2].l++; 
-                    }
-                    else if (d < 0) { 
-                        // Player 2 Win[cite: 1]
-                        stats[r.p2].w++; 
-                        stats[r.p2].pts += 2; 
-                        stats[r.p1].l++; 
-                    }
-                    else { 
-                        // Draw[cite: 1]
-                        stats[r.p1].d++; 
-                        stats[r.p1].pts += 1; 
-                        stats[r.p2].d++; 
-                        stats[r.p2].pts += 1; 
-                    }
-                } else { 
-                    // If no scores were entered, don't count the game[cite: 1]
-                    stats[r.p1].p--; 
-                    stats[r.p2].p--; 
-                }
+                    if (d > 0) { stats[r.p1].w++; stats[r.p1].pts += 2; stats[r.p2].l++; }
+                    else if (d < 0) { stats[r.p2].w++; stats[r.p2].pts += 2; stats[r.p1].l++; }
+                    else { stats[r.p1].d++; stats[r.p1].pts += 1; stats[r.p2].d++; stats[r.p2].pts += 1; }
+                } else { stats[r.p1].p--; stats[r.p2].p--; }
             }
         });
     });
 
-    // Sort by points (highest first)[cite: 1]
     const sorted = Object.keys(stats).sort((a,b) => stats[b].pts - stats[a].pts);
-    
-    // Render the table rows[cite: 1]
     document.getElementById('standings-body').innerHTML = sorted.map(name => `
-        <tr>
-            <td class="player-col">${name}</td>
-            <td>${stats[name].p}</td>
-            <td>${stats[name].w}</td>
-            <td>${stats[name].d}</td>
-            <td>${stats[name].l}</td>
-            <td class="pts-active">${stats[name].pts}</td>
-            <td>●</td>
-        </tr>
+        <tr><td class="player-col">${name}</td><td>${stats[name].p}</td><td>${stats[name].w}</td><td>${stats[name].d}</td><td>${stats[name].l}</td><td class="pts-active">${stats[name].pts}</td><td>●</td></tr>
     `).join('');
 }
 
 function renderHistory(history) {
     const list = document.getElementById('history-list');
     
-    // We reverse the history to show the most recent weeks (Finals/Week 16) at the top
     list.innerHTML = history.slice().reverse().map((w, index) => {
         const labelText = w.label || "";
-        const isPostSeason = labelText.toLowerCase().includes("final") || labelText.toLowerCase().includes("semi");
+        const labelLower = labelText.toLowerCase();
         
-        // 1. Logic for the Champion Image (Specific to Week 16)
+        // Define match types for styling[cite: 1]
+        const isSemi = labelLower.includes("semi");
+        const isPlayOff = labelLower.includes("play off");
+        const isFinal = labelLower.includes("final") && !isSemi;
+
+        // Determine bar style based on your requirements[cite: 1]
+        let barStyle = "";
+        let labelStyle = "";
+
+        if (isSemi) {
+            barStyle = "background: silver; color: black;";
+            labelStyle = "color: black; border-left-color: #555;";
+        } else if (isPlayOff) {
+            barStyle = "background: #cd7f32; color: white;"; // Bronze color
+            labelStyle = "color: white; border-left-color: white;";
+        } else if (isFinal) {
+            barStyle = "background: #222; color: gold;";
+            labelStyle = "color: var(--gold); border-left-color: var(--gold);";
+        }
+
         const championImg = (labelText === "Week 16") 
             ? `<img src="champion.png" alt="Champion" style="width:100%; max-width:300px; display:block; margin: 10px auto; border-radius: 8px; border: 2px solid var(--gold);">` 
             : "";
 
-        // 2. Logic for Match Rows within the dropdown
         let matchesHtml = w.results.map(r => {
             let resTxt = "v", resCls = "";
             if (r.walkover) {
@@ -346,21 +311,18 @@ function renderHistory(history) {
                     }
                 }
             }
-            return `
-                <div class="hist-match-row">
-                    <div class="hist-player-left p1-txt">${r.p1}</div>
-                    <div class="hist-result-center ${resCls}">${resTxt}</div>
-                    <div class="hist-player-right p2-txt">${r.p2}</div>
-                </div>`;
+            return `<div class="hist-match-row">
+                <div class="hist-player-left p1-txt">${r.p1}</div>
+                <div class="hist-result-center ${resCls}">${resTxt}</div>
+                <div class="hist-player-right p2-txt">${r.p2}</div>
+            </div>`;
         }).join('');
 
-        // 3. Assemble the HTML: Image (if any) + The Expandable Week Box
-        // Post-season weeks get a dark background to separate them from the regular season
         return `
             ${championImg}
             <details ${index === 0 ? 'open' : ''}>
-                <summary style="${isPostSeason ? 'background: #222; color: #fff;' : ''}">
-                    <div class="week-label" style="${isPostSeason ? 'color: var(--gold); border-left-color: var(--gold);' : ''}">
+                <summary style="${barStyle}">
+                    <div class="week-label" style="${labelStyle}">
                         ${w.label}
                     </div>
                 </summary>
